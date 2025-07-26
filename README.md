@@ -1,1 +1,1 @@
-# howse-chore-app
+# house-chore-app
