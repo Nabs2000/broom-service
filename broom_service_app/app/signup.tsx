@@ -1,11 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { Link } from 'expo-router';
 
-export default function Index() {
+export default function SignUp() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>This is the landing page. Prompt for Login or Sign Up.</Text>
-      <Link style={styles.text} href="/signup">Sign Up</Link>
+      <Text style={styles.text}>This is the sign up page.</Text>
     </View>
   );
 }
@@ -16,7 +14,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#25292e',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
   },
   text: {
     color: '#fff',
