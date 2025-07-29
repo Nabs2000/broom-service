@@ -5,9 +5,6 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Broom Service</Text>
-      <Text style={styles.text}>
-        This is the landing page. Prompt for Login or Sign Up.
-      </Text>
       <Link style={styles.text} href="/signup">
         Sign Up
       </Link>
