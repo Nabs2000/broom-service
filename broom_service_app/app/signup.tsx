@@ -27,33 +27,20 @@ export default function Signup() {
     if (!firstName.trim()) {
       setFirstNameError("First name required");
       alert("First name required");
-      if (!lastName.trim()) {
-        setLastNameError("Last name required");
-        alert("Last name required");
-        return;
-      }
-      if (!username.trim()) {
-        setUsernameError("Username required");
-        alert("Username required");
-        return;
-      }
-      if (!password.trim()) {
-        setPasswordError("Password required");
-        alert("Password required");
-        return;
-      }
-      return;
     }
     if (!lastName.trim()) {
       setLastNameError("Last name required");
+      alert("Last name required");
       return;
     }
     if (!username.trim()) {
       setUsernameError("Username required");
+      alert("Username required");
       return;
     }
     if (!password.trim()) {
       setPasswordError("Password required");
+      alert("Password required");
       return;
     }
 
@@ -143,6 +130,11 @@ export default function Signup() {
         <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
           <Text style={styles.signupButtonText}>Sign up</Text>
         </TouchableOpacity>
+        <View style={styles.alreadySignedUp}>
+          <Link href="/login" style={styles.alreadySignedUp}>
+            Already have an account? Log in
+          </Link>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
