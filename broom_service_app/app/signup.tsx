@@ -26,6 +26,22 @@ export default function Signup() {
   const handleSubmit = () => {
     if (!firstName.trim()) {
       setFirstNameError("First name required");
+      alert("First name required");
+      if (!lastName.trim()) {
+        setLastNameError("Last name required");
+        alert("Last name required");
+        return;
+      }
+      if (!username.trim()) {
+        setUsernameError("Username required");
+        alert("Username required");
+        return;
+      }
+      if (!password.trim()) {
+        setPasswordError("Password required");
+        alert("Password required");
+        return;
+      }
       return;
     }
     if (!lastName.trim()) {
@@ -71,9 +87,9 @@ export default function Signup() {
             placeholder="John"
             value={firstName}
             onChangeText={(text) => {
-              setUsername(text);
+              setFirstName(text);
               if (usernameError && text.trim()) {
-                setUsernameError("");
+                setFirstName("");
               }
             }}
             placeholderTextColor="#aaa"
@@ -125,7 +141,7 @@ export default function Signup() {
 
         {/* Log In Button */}
         <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
-          <Text style={styles.loginButtonText}>Sign up</Text>
+          <Text style={styles.signupButtonText}>Sign up</Text>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
