@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
     fontSize: 100,
     fontFamily: "Cochin",
     fontWeight: "bold",
-    marginTop: 150,
-    marginBottom: 70,
+    marginTop: 100,
+    marginBottom: 50,
   },
   userInputGroup: {
     width: 300,
@@ -53,6 +53,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 20,
     fontWeight: "bold",
+  },
+  alreadySignedUp: {
+    color: "#4e9bde",
+    fontSize: 16,
+    textDecorationLine: "underline",
+    marginTop: 5,
   },
 });
 
