@@ -1,9 +1,9 @@
 import styles from './styles/loginPageStyles';
 import { Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { Link, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 
-export default function Login() {
+export default function ForgotPassword() {
   const router = useRouter();
 
   return (
@@ -15,20 +15,19 @@ export default function Login() {
           <AntDesign name="arrowleft" size={30} color={"#fff"} />
         </TouchableOpacity>
 
-        {/* Log In Title Text */}
-        <Text style={styles.loginTitle}>Log In</Text>
+        {/* Reset Password Title Text */}
+        <Text style={styles.loginTitle}>Reset Password</Text>
 
-        {/* User Log in Fields */}
+        {/* New Pass and Confirm New Pass Field */}
         <View style={styles.userInputGroup}>
-          <Text style={styles.fieldLabel}>Username or Email</Text>
+          <Text style={styles.fieldLabel}>New Password</Text>
           <TextInput 
             style={styles.userInput}
-            placeholder="example@gmail.com"
+            placeholder="*******"
             placeholderTextColor="#aaa"
-            autoCapitalize="none"
-            keyboardType="email-address"
+            secureTextEntry
           />
-          <Text style={styles.fieldLabel}>Password</Text>
+          <Text style={styles.fieldLabel}>Confirm New Password</Text>
           <TextInput 
             style={styles.userInput}
             placeholder="*******"
@@ -37,16 +36,10 @@ export default function Login() {
           />
         </View>
 
-        {/* Log In Button */}
-        <TouchableOpacity style={styles.loginButton} onPress={() => alert("Log in Button is Pressed.")} >
-          <Text style={styles.loginButtonText}>Log In</Text>
+        {/* Update Password Button */}
+        <TouchableOpacity style={styles.loginButton} onPress={() => alert("Update New Password Button is Pressed.")} >
+          <Text style={styles.loginButtonText}>Update Password</Text>
         </TouchableOpacity>
-
-        {/* Forgot Password or Register */}
-        <View style={styles.forgotPassOrRegister}>
-          <Link href="/forgotPass"style={styles.forgotPassOrRegisterText}>Forgot Password? Reset</Link>
-          <Link href="/signup" style={styles.forgotPassOrRegisterText}>Don&apos;t have an account? Sign Up</Link>
-        </View>
       </View>
     </TouchableWithoutFeedback>
   );
