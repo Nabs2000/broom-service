@@ -76,7 +76,7 @@ export default function Signup() {
             onChangeText={(text) => {
               setFirstName(text);
               if (firstNameError && text.trim()) {
-                setFirstName("");
+                setFirstNameError("");
               }
             }}
             placeholderTextColor="#aaa"
