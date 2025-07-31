@@ -99,7 +99,7 @@ export default function Signup() {
           <Text style={styles.fieldLabel}>Last Name</Text>
           <TextInput
             style={styles.userInput}
-            placeholder="John"
+            placeholder="Doe"
             placeholderTextColor="#aaa"
             value={lastName}
             onChangeText={(text) => {
