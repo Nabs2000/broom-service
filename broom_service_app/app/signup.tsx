@@ -1,4 +1,4 @@
-import styles from "./signupPageStyles";
+import styles from "./styles/signupPageStyles";
 import React, { useState } from "react";
 import {
   Keyboard,

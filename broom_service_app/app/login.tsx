@@ -1,4 +1,4 @@
-import styles from './loginPageStyles';
+import styles from './styles/loginPageStyles';
 import { Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
@@ -44,7 +44,7 @@ export default function Login() {
 
         {/* Forgot Password or Register */}
         <View style={styles.forgotPassOrRegister}>
-          <Text style={styles.forgotPassOrRegisterText} onPress={() => alert("Forgot Password is pressed.")}>Forgot Password? Reset</Text>
+          <Link href="/forgotPass"style={styles.forgotPassOrRegisterText}>Forgot Password? Reset</Link>
           <Link href="/signup" style={styles.forgotPassOrRegisterText}>Don&apos;t have an account? Sign Up</Link>
         </View>
       </View>
