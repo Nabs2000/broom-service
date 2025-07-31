@@ -75,7 +75,7 @@ export default function Signup() {
             value={firstName}
             onChangeText={(text) => {
               setFirstName(text);
-              if (usernameError && text.trim()) {
+              if (firstNameError && text.trim()) {
                 setFirstName("");
               }
             }}
