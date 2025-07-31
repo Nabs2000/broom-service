@@ -27,6 +27,7 @@ export default function Signup() {
     if (!firstName.trim()) {
       setFirstNameError("First name required");
       alert("First name required");
+      return;
     }
     if (!lastName.trim()) {
       setLastNameError("Last name required");
