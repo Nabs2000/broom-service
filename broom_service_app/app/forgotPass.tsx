@@ -1,6 +1,6 @@
 import styles from './styles/resetPassPageStyles';
 import { Keyboard, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { AntDesign } from '@expo/vector-icons';
 
 export default function ForgotPassword() {
@@ -31,8 +31,8 @@ export default function ForgotPassword() {
         </View>
 
         {/* Reset Pass Button */}
-        <TouchableOpacity style={styles.resetPassButton} onPress={() => alert("Reset Button is Pressed.")} >
-          <Text style={styles.resetPassButtonText}>Reset Password</Text>
+        <TouchableOpacity style={styles.resetPassButton}>
+          <Link href="/resetPass" style={styles.resetPassButtonText}>Reset Password</Link>
         </TouchableOpacity>
       </View>
     </TouchableWithoutFeedback>
