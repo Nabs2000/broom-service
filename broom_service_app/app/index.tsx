@@ -11,6 +11,9 @@ export default function Index() {
       <Link style={styles.text} href="/login">
         Login
       </Link>
+      <Link style={styles.text} href="/taskTesting">
+        Task Testing
+      </Link>
     </View>
   );
 }
