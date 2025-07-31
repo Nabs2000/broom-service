@@ -44,7 +44,7 @@ export default function Login() {
 
         {/* Forgot Password or Register */}
         <View style={styles.forgotPassOrRegister}>
-          <Link href="/forgotPass"style={styles.forgotPassOrRegisterText}>Forgot Password? Reset</Link>
+          <Link href="/forgotPass" style={styles.forgotPassOrRegisterText}>Forgot Password? Reset</Link>
           <Link href="/signup" style={styles.forgotPassOrRegisterText}>Don&apos;t have an account? Sign Up</Link>
         </View>
       </View>
