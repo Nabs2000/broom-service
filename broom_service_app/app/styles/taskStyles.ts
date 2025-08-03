@@ -14,6 +14,16 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
+  checkboxContainer: {
+    flexDirection: "row",
+    marginBottom: 20,
+  },
+  checkbox: {
+    alignSelf: "center",
+  },
+  label: {
+    margin: 8,
+  },
   title: { fontSize: 20, fontWeight: "bold", color: "#333" },
   text: { fontSize: 12, marginTop: 5, color: "#333" },
   completeButton: { fontSize: 20, fontWeight: "bold", color: "#333" },
