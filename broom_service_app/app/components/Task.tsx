@@ -1,18 +1,22 @@
 import React, { useState } from "react";
 import { Button, Text, View } from "react-native";
 import FlipCard from "react-native-flip-card";
-import styles from "../styles/signupPageStyles";
+import styles from "../styles/taskStyles";
 
 const Task = () => {
   return (
     <FlipCard>
       {/* Face Side */}
-    <View style={[styles.userInput, { alignItems: "center", justifyContent: "center", height: 200, backgroundColor: "#f0f0f0", borderRadius: 12, shadowColor: "#000", shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }]}>
-      <Text style={{ fontSize: 20, fontWeight: "bold", color: "#333" }}>The Face</Text>
-    </View>
-    {/* Back Side */}
-    <View style={[styles.userInput, { alignItems: "center", justifyContent: "center", height: 200, backgroundColor: "#e0e0e0", borderRadius: 12, shadowColor: "#000", shadowOpacity: 0.1, shadowRadius: 8, elevation: 4 }]}>
-        <Text>The Back</Text>
+      <View style={styles.view}>
+        <Text style={styles.title}>Task Name</Text>
+        <Text style={styles.text}>Assigned to: Nabeel Sabzwari</Text>
+        <Text style={styles.text}>Due date: 07/12/2025</Text>
+      </View>
+      {/* Back Side */}
+      <View style={styles.view}>
+        <Text style={styles.title}>Task Name</Text>
+        <Text style={styles.text}>Description:</Text>
+        <Text style={styles.text}>Date created: 07/10/2025</Text>
       </View>
     </FlipCard>
   );
