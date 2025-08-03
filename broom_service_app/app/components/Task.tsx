@@ -15,7 +15,17 @@ const Task = () => {
   return (
     <FlipCard flipVertical={true} flipHorizontal={false}>
       {/* Face Side */}
-      <View style={styles.view}>
+      <View
+        style={[
+          styles.view,
+          {
+            backgroundColor: isSelected ? "#90ee90" : "#f08080",
+            transitionProperty: "background-color",
+            transitionDuration: "500ms",
+            transitionTimingFunction: "ease",
+          },
+        ]}
+      >
         <Text style={styles.title}>Task Name</Text>
         <Text style={styles.text}>Assigned to: Nabeel Sabzwari</Text>
         <Text style={styles.text}>Due date: 07/12/2025</Text>
@@ -31,7 +41,17 @@ const Task = () => {
         </TouchableWithoutFeedback>
       </View>
       {/* Back Side */}
-      <View style={styles.view}>
+      <View
+        style={[
+          styles.view,
+          {
+            backgroundColor: isSelected ? "#90ee90" : "#f08080",
+            transitionProperty: "background-color",
+            transitionDuration: "500ms",
+            transitionTimingFunction: "ease",
+          },
+        ]}
+      >
         <Text style={styles.title}>Task Name</Text>
         <Text style={styles.text}>Description: This is a task</Text>
         <Text style={styles.text}>Date created: 07/10/2025</Text>
