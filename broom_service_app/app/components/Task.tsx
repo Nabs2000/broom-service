@@ -55,6 +55,7 @@ const Task = () => {
         <Text style={styles.title}>Task Name</Text>
         <Text style={styles.text}>Description: This is a task</Text>
         <Text style={styles.text}>Date created: 07/10/2025</Text>
+        <Text style={styles.text}>Date completed: 07/14/2025</Text>
       </View>
     </FlipCard>
   );
