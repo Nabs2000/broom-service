@@ -5,7 +5,7 @@ import styles from "../styles/taskStyles";
 
 const Task = () => {
   return (
-    <FlipCard>
+    <FlipCard flipVertical={true} flipHorizontal={false}>
       {/* Face Side */}
       <View style={styles.view}>
         <Text style={styles.title}>Task Name</Text>
