@@ -13,12 +13,12 @@ export default function UserView() {
             <ScrollView contentContainerStyle={styles.content}>
                 <Text style={styles.greeting}>Hello, {userName}</Text>
                 <Text style={styles.sectionTitle}>Pending tasks:</Text>
-                {pendingTasks.map((task, index) => (
-                    <Text key={index} style={styles.task}>{task}</Text>
+                {pendingTasks.map((task) => (
+                    <Text key={task} style={styles.task}>{task}</Text>
                 ))}
                 <Text style={styles.sectionTitle}>Completed tasks:</Text>
-                {completedTasks.map((task, index) => (
-                    <Text key={index} style={styles.task}>{task}</Text>
+                {completedTasks.map((task) => (
+                    <Text key={task} style={styles.task}>{task}</Text>
                 ))}
             </ScrollView>
         </View>
