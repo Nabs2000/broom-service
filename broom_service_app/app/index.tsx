@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Link } from "expo-router";
+import styles from "./styles/indexPageStyles";
 
 export default function Index() {
   return (
@@ -14,16 +15,3 @@ export default function Index() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#25292e",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-  },
-  text: {
-    color: "#fff",
-  },
-});
