@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { Link, useRouter } from "expo-router";
 import styles from "./styles/indexPageStyles";
-import { AntDesign } from "@expo/vector-icons";
 
 export default function Index() {
   const router = useRouter();
