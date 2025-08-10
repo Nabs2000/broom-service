@@ -11,7 +11,7 @@ import { Link, useRouter } from "expo-router";
 import styles from "./styles/indexPageStyles";
 
 export default function Index() {
-  const router = useRouter();
+  // Removed unused router variable
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>
