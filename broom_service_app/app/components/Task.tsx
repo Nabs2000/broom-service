@@ -11,7 +11,7 @@ import styles from "../styles/taskStyles";
 
 // Task takes a taskId as prop
 type TaskProps = {
-  taskId: string;
+  task: TaskType;
 };
 
 type TaskType = {
@@ -23,10 +23,10 @@ type TaskType = {
   date_completed?: string | null;
 };
 
-const Task = ({ taskId }: TaskProps) => {
+const Task = ({ task }: TaskProps) => {
   const [isSelected, setSelection] = useState(false);
-  const [task, setTask] = useState<TaskType | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [taskData, setTaskData] = useState<TaskType | null>(task);
+  const [loading, setLoading] = useState(false);
 
   const animation = useRef(new Animated.Value(0)).current;
 
@@ -44,45 +44,9 @@ const Task = ({ taskId }: TaskProps) => {
     outputRange: ["#f08080", "#90ee90"],
   });
 
-  // Fetch task data from backend
-  useEffect(() => {
-    const fetchTask = async () => {
-      try {
-        // 👇 get Cognito token for auth
-        const idToken = await getIdTokenFromCognito();
-
-        const res = await fetch(
-          `https://abc123.execute-api.us-west-2.amazonaws.com/prod/task?task_id=${taskId}`,
-          {
-            headers: { Authorization: idToken },
-          }
-        );
-        const data = await res.json();
-        setTask(data);
-      } catch (err) {
-        console.error("Error fetching task:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (taskId) fetchTask();
-  }, [taskId]);
-
-  if (loading) {
-    return (
-      <View style={styles.view}>
-        <Text>Loading task...</Text>
-      </View>
-    );
-  }
-
-  if (!task) {
-    return (
-      <View style={styles.view}>
-        <Text>Task not found</Text>
-      </View>
-    );
+  // Render nothing or a loading indicator if taskData is null or loading
+  if (loading || !taskData) {
+    return <View><Text>Loading...</Text></View>;
   }
 
   return (
@@ -96,9 +60,9 @@ const Task = ({ taskId }: TaskProps) => {
           },
         ]}
       >
-        <Text style={styles.title}>{task.name}</Text>
-        <Text style={styles.text}>Assigned to: {task.assigned_to}</Text>
-        <Text style={styles.text}>Due date: {task.due_date}</Text>
+        <Text style={styles.title}>{taskData.name}</Text>
+        <Text style={styles.text}>Assigned to: {taskData.assigned_to}</Text>
+        <Text style={styles.text}>Due date: {taskData.due_date}</Text>
         <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
           <View style={styles.checkboxContainer}>
             <BouncyCheckBox
@@ -121,11 +85,11 @@ const Task = ({ taskId }: TaskProps) => {
           },
         ]}
       >
-        <Text style={styles.title}>{task.name}</Text>
-        <Text style={styles.text}>Description: {task.description}</Text>
-        <Text style={styles.text}>Date created: {task.date_created}</Text>
+        <Text style={styles.title}>{taskData.name}</Text>
+        <Text style={styles.text}>Description: {taskData.description}</Text>
+        <Text style={styles.text}>Date created: {taskData.date_created}</Text>
         <Text style={styles.text}>
-          Date completed: {task.date_completed || "Not completed"}
+          Date completed: {taskData.date_completed || "Not completed"}
         </Text>
       </View>
     </FlipCard>
