@@ -120,7 +120,6 @@ const Task = ({ task, onTaskUpdate }: TaskProps) => {
           },
         ]}
       >
-        <Text style={styles.title}>{taskData.name}</Text>
         <Text style={styles.text}>Description: {taskData.description}</Text>
         <Text style={styles.text}>Date created: {taskData.date_created}</Text>
         <Text style={styles.text}>
