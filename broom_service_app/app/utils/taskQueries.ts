@@ -55,7 +55,6 @@ export const updateTask = async (taskId: string, isCompleted: boolean): Promise<
 export const fetchUserTasks = async (userId: string): Promise<TaskType[]> => {
   try {
     // Make a GET request to the Lambda function endpoint
-    // Replace 'YOUR_LAMBDA_FUNCTION_URL' with your actual Lambda function URL
     const response = await fetch(
       `https://tn6u6vcovr73c3fazqspipgaji0dcsdp.lambda-url.us-west-2.on.aws/?assigned_to=${encodeURIComponent(userId)}`,
       {
