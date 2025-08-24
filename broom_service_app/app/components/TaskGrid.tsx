@@ -40,8 +40,16 @@ const TaskGrid: React.FC<TaskGridProps> = ({ userId }) => {
       setLoading(true);  // Show loading indicator
       // Fetch tasks for the current user
       const userTasks = await fetchUserTasks(userId);
+      // Sort tasks: pending first, then completed, both sorted by creation date
+      const sortedTasks = [...userTasks].sort((a, b) => {
+        // If one is completed and the other isn't, pending comes first
+        if (a.date_completed && !b.date_completed) return 1;
+        if (!a.date_completed && b.date_completed) return -1;
+        // If both have the same status, sort by creation date (newest first)
+        return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
+      });
       // Update tasks in state
-      setTasks(userTasks);
+      setTasks(sortedTasks);
       // Clear any previous errors
       setError(null);
     } catch (err) {
@@ -52,6 +60,23 @@ const TaskGrid: React.FC<TaskGridProps> = ({ userId }) => {
       // Always hide loading indicator when done
       setLoading(false);
     }
+  };
+
+  // Handle task update from child component
+  const handleTaskUpdate = (updatedTask: TaskType) => {
+    setTasks(prevTasks => {
+      // Find and update the task in the array
+      const updatedTasks = prevTasks.map(task => 
+        task.id === updatedTask.id ? updatedTask : task
+      );
+      
+      // Re-sort the tasks
+      return updatedTasks.sort((a, b) => {
+        if (a.date_completed && !b.date_completed) return 1;
+        if (!a.date_completed && b.date_completed) return -1;
+        return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
+      });
+    });
   };
 
   // Load tasks when the component mounts or when userId changes
@@ -84,15 +109,19 @@ const TaskGrid: React.FC<TaskGridProps> = ({ userId }) => {
   // Helper function to render a single task
   const renderTask = (task: TaskType) => (
     <View key={task.id} style={styles.taskWrapper}>
-      {/* Render the Task component with the task data */}
-      <Task task={{
-        name: task.name,
-        assigned_to: task.assigned_to,
-        due_date: task.due_date,
-        description: task.description,
-        date_created: task.date_created,
-        date_completed: task.date_completed
-      }} />
+      <Task 
+        task={{
+          id: task.id,
+          name: task.name,
+          assigned_to: task.assigned_to,
+          due_date: task.due_date,
+          description: task.description,
+          date_created: task.date_created,
+          date_completed: task.date_completed,
+          status: task.status
+        }} 
+        onTaskUpdate={handleTaskUpdate}
+      />
     </View>
   );
 
