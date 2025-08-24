@@ -27,22 +27,24 @@ export interface TaskType {
 export const updateTask = async (taskId: string, isCompleted: boolean): Promise<TaskType> => {
   try {
     const response = await fetch(
-      'https://YOUR_UPDATE_LAMBDA_FUNCTION_URL',
+      `https://z2agdsgce2lr6wqg3q7ugqm4su0sbgup.lambda-url.us-west-2.on.aws/?taskId=${encodeURIComponent(taskId)}`,
       {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          taskId,
           status: isCompleted ? 'completed' : 'pending',
           date_completed: isCompleted ? new Date().toISOString() : null
         }),
       }
     );
 
+    console.log('Response:', response);
+
     if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
+      const error = await response.text();
+      throw new Error(`Error: ${response.status} - ${error}`);
     }
 
     return await response.json();
@@ -74,18 +76,16 @@ export const fetchUserTasks = async (userId: string): Promise<TaskType[]> => {
 
     // Parse the JSON response
     const data = await response.json();
-    
-    // Transform the response data to match our TaskType interface
-    // This handles different possible field names from the API
-    return Object.keys(data).map((key: string) => ({
-      ...data[key],
-      id: key,
-      date_created: data[key].date_created || new Date().toISOString(),
-      date_completed: data[key].date_completed || null,
-      status: data[key].status || (data[key].date_completed ? 'completed' : 'pending')
-    })) || [];  // Return empty array if no tasks are found
+
+    return Array.isArray(data) 
+    ? data.map(task => ({
+        ...task,
+        date_created: task.date_created || new Date().toISOString(),
+        date_completed: task.date_completed || null,
+        status: task.status || (task.date_completed ? 'completed' : 'pending')
+      }))
+    : [];
   } catch (error) {
-    // Log the error and re-throw it for the calling component to handle
     console.error('Error fetching tasks:', error);
     throw error;
   }
