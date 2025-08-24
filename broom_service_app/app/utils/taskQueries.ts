@@ -17,6 +17,41 @@ export interface TaskType {
  * @returns A promise that resolves to an array of TaskType objects
  * @throws Will throw an error if the fetch request fails
  */
+/**
+ * Updates a task's status and completion date
+ * @param taskId - The ID of the task to update
+ * @param isCompleted - Whether the task is being marked as completed
+ * @returns A promise that resolves to the updated task
+ * @throws Will throw an error if the update request fails
+ */
+export const updateTask = async (taskId: string, isCompleted: boolean): Promise<TaskType> => {
+  try {
+    const response = await fetch(
+      'https://YOUR_UPDATE_LAMBDA_FUNCTION_URL',
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          taskId,
+          status: isCompleted ? 'completed' : 'pending',
+          date_completed: isCompleted ? new Date().toISOString() : null
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating task:', error);
+    throw error;
+  }
+};
+
 export const fetchUserTasks = async (userId: string): Promise<TaskType[]> => {
   try {
     // Make a GET request to the Lambda function endpoint
