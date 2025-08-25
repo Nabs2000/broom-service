@@ -53,6 +53,9 @@ export default function Index() {
             Don&apos;t have an account? Sign Up
           </Link>
         </View>
+        <Link href="/components/userView" style={styles.forgotPassOrRegisterText}>
+          User View
+        </Link>
       </View>
     </TouchableWithoutFeedback>
   );
