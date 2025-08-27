@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import styles from '../styles/userViewStyles';
+import TaskList from './TaskList';
 import { LAMBDA_URL } from '../config';
 
 export default function UserView() {
@@ -46,30 +47,16 @@ export default function UserView() {
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.header}>User View</Text>
-            <ScrollView contentContainerStyle={styles.content}>
-                <Text style={styles.greeting}>Hello, {userName}</Text>
-                {error && (
-                    <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>
-                )}
-                <Text style={styles.sectionTitle}>Pending tasks:</Text>
-                {pendingTasks.length === 0 ? (
-                    <Text style={styles.task}>No pending tasks.</Text>
-                ) : (
-                    pendingTasks.map((task) => (
-                        <Text key={task} style={styles.task}>{task}</Text>
-                    ))
-                )}
-                <Text style={styles.sectionTitle}>Completed tasks:</Text>
-                {completedTasks.length === 0 ? (
-                    <Text style={styles.task}>No completed tasks.</Text>
-                ) : (
-                    completedTasks.map((task) => (
-                        <Text key={task} style={styles.task}>{task}</Text>
-                    ))
-                )}
-            </ScrollView>
-        </View>
-    );
+    <View style={styles.container}>
+        <Text style={styles.header}>User View</Text>
+        <ScrollView contentContainerStyle={styles.content}>
+            <Text style={styles.greeting}>Hello, {userName}</Text>
+            {error && (
+                <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>
+            )}
+            <TaskList title="Pending tasks" tasks={pendingTasks} />
+            <TaskList title="Completed tasks" tasks={completedTasks} />
+        </ScrollView>
+    </View>
+);
 }
