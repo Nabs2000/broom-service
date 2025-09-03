@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import styles from '../styles/userViewStyles';
 import TaskList from './TaskList';
-import { LAMBDA_URL } from '../config';
+import { LAMBDA_URL } from '../config'; 
 import CreateTaskScreen from './CreateTaskScreen';
 
 export default function UserView() {

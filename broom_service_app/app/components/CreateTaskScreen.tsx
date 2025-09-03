@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import { LAMBDA_URL } from '../config2';
+import { LAMBDA_URL } from '../config2'; // Added LAMBDA FUNCTION URI here
 
 const CreateTaskScreen = () => {
     const [name, setName] = useState('');
