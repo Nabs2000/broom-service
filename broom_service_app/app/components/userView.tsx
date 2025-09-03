@@ -3,6 +3,7 @@ import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import styles from '../styles/userViewStyles';
 import TaskList from './TaskList';
 import { LAMBDA_URL } from '../config';
+import CreateTaskScreen from './CreateTaskScreen';
 
 export default function UserView() {
     const [userName, setUserName] = useState('Loading...');
@@ -56,6 +57,7 @@ export default function UserView() {
             )}
             <TaskList title="Pending tasks" tasks={pendingTasks} />
             <TaskList title="Completed tasks" tasks={completedTasks} />
+            <CreateTaskScreen />
         </ScrollView>
     </View>
 );
