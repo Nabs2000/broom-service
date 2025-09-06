@@ -2,12 +2,11 @@ import {
   Keyboard,
   TouchableOpacity,
   TouchableWithoutFeedback,
-  StyleSheet,
   Text,
   TextInput,
   View,
 } from "react-native";
-import { Link, useRouter } from "expo-router";
+import { Link } from "expo-router";
 import styles from "./styles/indexPageStyles";
 
 export default function Index() {
