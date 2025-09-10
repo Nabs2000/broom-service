@@ -10,7 +10,7 @@ web-build/
 expo-env.d.ts
 
 # App
-app/config.ts
+config.json
 
 # Native
 .kotlin/
