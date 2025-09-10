@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import styles from '../styles/userViewStyles';
 import TaskList from './TaskList';
-import { LAMBDA_URL } from '../config'; 
+import { GET_USER_URL } from '../config.json';
 import CreateTaskScreen from './CreateTaskScreen';
+import TaskGrid from './TaskGrid';
 
 export default function UserView() {
     const [userName, setUserName] = useState('Loading...');
@@ -14,7 +15,7 @@ export default function UserView() {
     const userId = 'user_001';
 
     useEffect(() => {
-        const lurl = `${LAMBDA_URL}?userId=${userId}`;
+        const lurl = `${GET_USER_URL}?userId=${userId}`;
 
         fetch(lurl)
             .then(res => {
@@ -49,14 +50,12 @@ export default function UserView() {
 
     return (
     <View style={styles.container}>
-        <Text style={styles.header}>User View</Text>
+        <Text style={styles.header}>Hello, {userName}</Text>
         <ScrollView contentContainerStyle={styles.content}>
-            <Text style={styles.greeting}>Hello, {userName}</Text>
             {error && (
                 <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>
             )}
-            <TaskList title="Pending tasks" tasks={pendingTasks} />
-            <TaskList title="Completed tasks" tasks={completedTasks} />
+            <TaskGrid userId={userId} />
             <CreateTaskScreen />
         </ScrollView>
     </View>
