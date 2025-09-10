@@ -1,3 +1,5 @@
+import { UPDATE_TASK_URL, FETCH_TASKS_URL } from '../config.json';
+
 // Define the TaskType interface that represents the structure of a task
 // This interface is used throughout the application to ensure type safety
 export interface TaskType {
@@ -27,7 +29,7 @@ export interface TaskType {
 export const updateTask = async (taskId: string, isCompleted: boolean): Promise<TaskType> => {
   try {
     const response = await fetch(
-      `https://z2agdsgce2lr6wqg3q7ugqm4su0sbgup.lambda-url.us-west-2.on.aws/?taskId=${encodeURIComponent(taskId)}`,
+      `${UPDATE_TASK_URL}?taskId=${encodeURIComponent(taskId)}`,
       {
         method: 'PATCH',
         headers: {
@@ -58,7 +60,7 @@ export const fetchUserTasks = async (userId: string): Promise<TaskType[]> => {
   try {
     // Make a GET request to the Lambda function endpoint
     const response = await fetch(
-      `https://tn6u6vcovr73c3fazqspipgaji0dcsdp.lambda-url.us-west-2.on.aws/?assigned_to=${encodeURIComponent(userId)}`,
+      `${FETCH_TASKS_URL}?assigned_to=${encodeURIComponent(userId)}`,
       {
         method: 'GET',
         headers: {
