@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { View, Text, Pressable, ScrollView, Alert } from "react-native";
 import { ArrowLeft, ArrowRight } from "lucide-react-native";
-import styles from "./styles/householdViewStyles";
+import styles from "../styles/householdViewStyles";
 
 type Member = {
   id: string;
