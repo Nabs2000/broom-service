@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, ScrollView } from 'react-native';
 // Import our custom hook for fetching tasks
-import { fetchUserTasks } from '../utils/taskQueries';
+import { fetchUserTasks, deleteTask } from '../utils/taskQueries';
 // Import the Task component to render individual tasks
 import Task from './Task';
 // Import styles specific to the TaskGrid component
@@ -79,6 +79,17 @@ const TaskGrid: React.FC<TaskGridProps> = ({ userId }) => {
     });
   };
 
+  // Handle delete task
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await deleteTask(taskId);
+      setTasks(prevTasks => prevTasks.filter(task => task.id != taskId));
+    } catch (err) {
+      console.error('Failed to delete task:', err);
+      setError('Failed to delete task. Please try again.')
+    }
+  };
+
   // Load tasks when the component mounts or when userId changes
   useEffect(() => {
     loadTasks();
@@ -106,6 +117,7 @@ const TaskGrid: React.FC<TaskGridProps> = ({ userId }) => {
     );
   }
 
+
   // Helper function to render a single task
   const renderTask = (task: TaskType) => (
     <View key={task.id} style={styles.taskWrapper}>
@@ -121,6 +133,7 @@ const TaskGrid: React.FC<TaskGridProps> = ({ userId }) => {
           status: task.status
         }} 
         onTaskUpdate={handleTaskUpdate}
+        onTaskDelete={handleDeleteTask}
       />
     </View>
   );

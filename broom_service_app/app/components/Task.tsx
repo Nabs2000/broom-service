@@ -17,6 +17,7 @@ import { FontAwesome } from '@expo/vector-icons';
 type TaskProps = {
   task: TaskType;
   onTaskUpdate?: (updatedTask: TaskType) => void;
+  onTaskDelete?: (taskId: string) => void;
 };
 
 export type TaskType = {
@@ -30,7 +31,7 @@ export type TaskType = {
   status?: 'pending' | 'in-progress' | 'completed';
 };
 
-const Task = ({ task, onTaskUpdate }: TaskProps) => {
+const Task = ({ task, onTaskUpdate, onTaskDelete }: TaskProps) => {
   const [taskData, setTaskData] = useState<TaskType | null>(task);
   const [loading, setLoading] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -131,7 +132,7 @@ const Task = ({ task, onTaskUpdate }: TaskProps) => {
       {/* Delete  */}
       <TouchableOpacity 
         style={{ marginTop: 10, alignSelf: "flex-end" }}
-        onPress={() => console.log("attempting to delete:", taskData.id)}
+        onPress={() => onTaskDelete?.(taskData.id)}
       >
         <FontAwesome name="trash" size={24} color="red" />
       </TouchableOpacity>

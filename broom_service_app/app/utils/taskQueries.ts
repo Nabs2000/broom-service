@@ -1,4 +1,4 @@
-import { UPDATE_TASK_URL, FETCH_TASKS_URL } from '../config.json';
+import { UPDATE_TASK_URL, FETCH_TASKS_URL, DELETE_TASKS_URL } from '../config.json';
 
 // Define the TaskType interface that represents the structure of a task
 // This interface is used throughout the application to ensure type safety
@@ -90,5 +90,27 @@ export const fetchUserTasks = async (userId: string): Promise<TaskType[]> => {
   } catch (error) {
     console.error('Error fetching tasks:', error);
     throw error;
+  }
+};
+
+export const deleteTask = async (taskId: string): Promise<boolean> => {
+  try {
+    const response = await fetch(
+      `${DELETE_TASKS_URL}/${taskId}}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    )
+    if (!response.ok) {
+      const error = await response.text();
+      throw new Error(`Error deleting ${response.status} - ${error}`);
+    }
+    return true;
+  } catch (error) {
+    console.error('Error deleting task', error);
+    return false;
   }
 };
