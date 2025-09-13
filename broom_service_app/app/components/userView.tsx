@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import styles from '../styles/userViewStyles';
-import TaskList from './TaskList';
 import { GET_USER_URL } from '../config.json';
 import CreateTaskScreen from './CreateTaskScreen';
 import TaskGrid from './TaskGrid';
