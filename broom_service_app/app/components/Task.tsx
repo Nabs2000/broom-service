@@ -132,7 +132,11 @@ const Task = ({ task, onTaskUpdate, onTaskDelete }: TaskProps) => {
       {/* Delete  */}
       <TouchableOpacity 
         style={{ marginTop: 10, alignSelf: "flex-end" }}
-        onPress={() => deleteTask(taskData.id)}
+        onPress={() => {
+          if (onTaskDelete) {
+            onTaskDelete(taskData.id);
+          }
+        }}
       >
         <FontAwesome name="trash" size={24} color="red" />
       </TouchableOpacity>
