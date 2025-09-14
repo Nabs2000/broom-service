@@ -10,7 +10,7 @@ import {
 import FlipCard from "react-native-flip-card";
 import BouncyCheckBox from "react-native-bouncy-checkbox";
 import styles from "../styles/taskStyles";
-import { updateTask } from "../utils/taskQueries";
+import { deleteTask, updateTask } from "../utils/taskQueries";
 import { FontAwesome } from '@expo/vector-icons';
 
 // Task component props
@@ -132,7 +132,7 @@ const Task = ({ task, onTaskUpdate, onTaskDelete }: TaskProps) => {
       {/* Delete  */}
       <TouchableOpacity 
         style={{ marginTop: 10, alignSelf: "flex-end" }}
-        onPress={() => onTaskDelete?.(taskData.id)}
+        onPress={() => deleteTask(taskData.id)}
       >
         <FontAwesome name="trash" size={24} color="red" />
       </TouchableOpacity>

@@ -83,7 +83,7 @@ const TaskGrid: React.FC<TaskGridProps> = ({ userId }) => {
   const handleDeleteTask = async (taskId: string) => {
     try {
       await deleteTask(taskId);
-      setTasks(prevTasks => prevTasks.filter(task => task.id != taskId));
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
     } catch (err) {
       console.error('Failed to delete task:', err);
       setError('Failed to delete task. Please try again.')

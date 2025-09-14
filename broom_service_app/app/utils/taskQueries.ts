@@ -96,7 +96,7 @@ export const fetchUserTasks = async (userId: string): Promise<TaskType[]> => {
 export const deleteTask = async (taskId: string): Promise<boolean> => {
   try {
     const response = await fetch(
-      `${DELETE_TASKS_URL}/${taskId}}`,
+      `${DELETE_TASKS_URL}?taskId=${encodeURIComponent(taskId)}`,
       {
         method: 'DELETE',
         headers: {
