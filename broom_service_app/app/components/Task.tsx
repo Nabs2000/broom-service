@@ -5,12 +5,13 @@ import {
   View,
   TouchableWithoutFeedback,
   ActivityIndicator,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from "react-native";
 import FlipCard from "react-native-flip-card";
 import BouncyCheckBox from "react-native-bouncy-checkbox";
 import styles from "../styles/taskStyles";
-import { deleteTask, updateTask } from "../utils/taskQueries";
+import { updateTask } from "../utils/taskQueries";
 import { FontAwesome } from '@expo/vector-icons';
 
 // Task component props
@@ -133,9 +134,19 @@ const Task = ({ task, onTaskUpdate, onTaskDelete }: TaskProps) => {
       <TouchableOpacity 
         style={{ marginTop: 10, alignSelf: "flex-end" }}
         onPress={() => {
-          if (onTaskDelete) {
-            onTaskDelete(taskData.id);
+        Alert.alert("Delete Task", "Are you sure you want to delete this task?", [{
+          text: "Cancel",
+          style: "cancel"
+        }, 
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => {
+            if (onTaskDelete) {
+              onTaskDelete(taskData.id);
+            }
           }
+        }], {cancelable: true})
         }}
       >
         <FontAwesome name="trash" size={24} color="red" />
