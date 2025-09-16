@@ -1,8 +1,15 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from "react-native";
 import { CREATE_TASK_URL } from '../config.json';
 import { Calendar } from 'react-native-calendars';
 import { MaterialIcons } from '@expo/vector-icons';
+import { assignedToUser, UserType } from "../utils/userQueries";
+import { Picker } from "@react-native-picker/picker";
+
+interface CreateTaskScreenProps {
+  familyId: string;
+  onTaskCreated?: () => void; 
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -103,13 +110,36 @@ const styles = StyleSheet.create({
   },
 });
 
-const CreateTaskScreen = () => {
+const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({ familyId }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [calendarVisible, setCalendarVisible] = useState(false);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [assignedTo, setAssignedTo] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [users, setUsers] = useState<UserType[]>([]);
+
+    useEffect(() => {
+    const loadUsers = async () => {
+        try {
+        console.log("Family ID:", familyId);
+        const data = await assignedToUser(familyId);
+        setUsers(data || []);  // ensure fallback to empty array
+        } catch (err) {
+        console.error("Failed to load users", err);
+        setUsers([]); // prevent undefined
+        } finally {
+        setLoading(false);
+        }
+    };
+
+    loadUsers();
+    }, [familyId]);
+
+    if (loading) {
+    return <div>Loading users...</div>; // or your loader component
+    }
     
 
     const handleSubmit = async () => {
@@ -226,13 +256,19 @@ const CreateTaskScreen = () => {
                                     </View>
                                 </Modal>
                                 
-                                <TextInput 
-                                    style={styles.input}
-                                    placeholder="Assigned To (User ID)"
-                                    value={assignedTo}
-                                    onChangeText={setAssignedTo}
-                                    keyboardType="default"
-                                />
+                                <Text>Assign To</Text>
+                                {loading ? (
+                                    <ActivityIndicator size="small" color="blue" />
+                                ) : (
+                                    <Picker
+                                    selectedValue={assignedTo}
+                                    onValueChange={(itemValue) => setAssignedTo(itemValue)}
+                                    >
+                                    {users.map((user) => (
+                                        <Picker.Item key={user.id} label={user.name} value={user.id} />
+                                    ))}
+                                    </Picker>
+                                )}
                                 
                                 <View style={styles.buttonContainer}>
                                     <TouchableOpacity 

@@ -55,7 +55,7 @@ export default function UserView() {
                 <Text style={{ color: 'red', marginBottom: 10 }}>{error}</Text>
             )}
             <TaskGrid userId={userId} />
-            <CreateTaskScreen />
+            <CreateTaskScreen familyId='fam_alpha'/>
         </ScrollView>
     </View>
 );
