@@ -42,8 +42,6 @@ export const updateTask = async (taskId: string, isCompleted: boolean): Promise<
       }
     );
 
-    console.log('Response:', response);
-
     if (!response.ok) {
       const error = await response.text();
       throw new Error(`Error: ${response.status} - ${error}`);

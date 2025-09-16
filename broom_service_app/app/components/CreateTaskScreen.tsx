@@ -88,11 +88,6 @@ const CreateTaskScreen = () => {
 
     const handleSubmit = async () => {
         try {
-            console.log('Creating task...');
-            console.log('Name:', name);
-            console.log('Description:', description);
-            console.log('Due Date:', dueDate);
-            console.log('Assigned To:', assignedTo);
             const response = await fetch(`${CREATE_TASK_URL}`, {
                 method: 'POST',
                 headers: {
@@ -107,10 +102,7 @@ const CreateTaskScreen = () => {
             });
 
             const data = await response.json();
-            console.log('Response data:', data);
-
             if (data.message === 'Task created successfully') {
-                console.log('Task created successfully');
                 // Reset form and close modal on success
                 setName('');
                 setDescription('');
@@ -118,10 +110,10 @@ const CreateTaskScreen = () => {
                 setAssignedTo('');
                 setModalVisible(false);
             } else {
-                console.error('Error creating task:', data.error);
+                // Error creating task
             }
         } catch (error) {
-            console.error('Error creating task:', error);
+            // Error creating task
         }
     };
 
