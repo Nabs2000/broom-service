@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { CREATE_TASK_URL } from '../config.json';
+import { Calendar } from 'react-native-calendars';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const styles = StyleSheet.create({
   container: {
@@ -76,10 +78,34 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
+  dateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 15,
+  },
+  dateButtonText: {
+    marginLeft: 10,
+    color: '#333',
+  },
+  calendarModal: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 20,
+  },
+  calendarContainer: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 15,
+  },
 });
 
 const CreateTaskScreen = () => {
     const [modalVisible, setModalVisible] = useState(false);
+    const [calendarVisible, setCalendarVisible] = useState(false);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [dueDate, setDueDate] = useState('');
@@ -163,21 +189,49 @@ const CreateTaskScreen = () => {
                                     onChangeText={setDescription}
                                     multiline
                                 />
-                                
-                                <TextInput 
-                                    style={styles.input}
-                                    placeholder="Due Date (YYYY-MM-DD)"
-                                    value={dueDate}
-                                    onChangeText={setDueDate}
-                                    keyboardType="numbers-and-punctuation"
-                                />
+
+                                <Text style={{marginBottom: 8, fontWeight: '500'}}>Due Date:</Text>
+                                <TouchableOpacity 
+                                    style={styles.dateButton}
+                                    onPress={() => setCalendarVisible(true)}
+                                >
+                                    <MaterialIcons name="event" size={24} color="#666" />
+                                    <Text style={styles.dateButtonText}>
+                                        {dueDate ? new Date(dueDate).toLocaleDateString() : 'Select a date'}
+                                    </Text>
+                                </TouchableOpacity>
+
+                                <Modal
+                                    visible={calendarVisible}
+                                    transparent={true}
+                                    animationType="fade"
+                                    onRequestClose={() => setCalendarVisible(false)}
+                                >
+                                    <View style={styles.calendarModal}>
+                                        <View style={styles.calendarContainer}>
+                                            <Calendar
+                                                onDayPress={(day) => {
+                                                    setDueDate(day.dateString);
+                                                    setCalendarVisible(false);
+                                                }}
+                                                markedDates={{
+                                                    [dueDate]: {selected: true, selectedColor: '#4CAF50'}
+                                                }}
+                                                theme={{
+                                                    todayTextColor: '#4CAF50',
+                                                    arrowColor: '#4CAF50',
+                                                }}
+                                            />
+                                        </View>
+                                    </View>
+                                </Modal>
                                 
                                 <TextInput 
                                     style={styles.input}
                                     placeholder="Assigned To (User ID)"
                                     value={assignedTo}
                                     onChangeText={setAssignedTo}
-                                    keyboardType="number-pad"
+                                    keyboardType="default"
                                 />
                                 
                                 <View style={styles.buttonContainer}>
