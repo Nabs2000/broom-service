@@ -22,8 +22,8 @@ export const assignedToUser = async (familyId: string): Promise<UserType[]> => {
         }
 
         const data = await response.json();
-        console.log("API raw response:", data); // <-- Check the structure
-        return data; // <-- Adjust based on actual response
+        console.log("API raw response:", data); 
+        return data; 
     } catch (error) {
         console.error("Error fetching users:", error);
         throw error;

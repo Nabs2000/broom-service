@@ -4,7 +4,7 @@ import { CREATE_TASK_URL } from '../config.json';
 import { Calendar } from 'react-native-calendars';
 import { MaterialIcons } from '@expo/vector-icons';
 import { assignedToUser, UserType } from "../utils/userQueries";
-import { Picker } from "@react-native-picker/picker";
+import DropDownPicker from "react-native-dropdown-picker";
 
 interface CreateTaskScreenProps {
   familyId: string;
@@ -119,27 +119,29 @@ const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({ familyId }) => {
     const [assignedTo, setAssignedTo] = useState('');
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState<UserType[]>([]);
+    const [open, setOpen] = useState(false);
+    const [items, setItems] = useState<{label: string; value: string}[]>([]);
 
     useEffect(() => {
     const loadUsers = async () => {
         try {
-        console.log("Family ID:", familyId);
-        const data = await assignedToUser(familyId);
-        setUsers(data || []);  // ensure fallback to empty array
+            console.log("Family ID:", familyId);
+            const data = await assignedToUser(familyId);
+            setUsers(data || []);
+            // Convert to DropDownPicker format
+            setItems(data.map(u => ({ label: u.name, value: u.id })));
         } catch (err) {
-        console.error("Failed to load users", err);
-        setUsers([]); // prevent undefined
+            console.error("Failed to load users", err);
+            setUsers([]);
+            setItems([]);
         } finally {
-        setLoading(false);
+            setLoading(false);
         }
-    };
+        };
 
-    loadUsers();
-    }, [familyId]);
+            loadUsers();
+        }, [familyId]);
 
-    if (loading) {
-    return <div>Loading users...</div>; // or your loader component
-    }
     
 
     const handleSubmit = async () => {
@@ -260,14 +262,17 @@ const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({ familyId }) => {
                                 {loading ? (
                                     <ActivityIndicator size="small" color="blue" />
                                 ) : (
-                                    <Picker
-                                    selectedValue={assignedTo}
-                                    onValueChange={(itemValue) => setAssignedTo(itemValue)}
-                                    >
-                                    {users.map((user) => (
-                                        <Picker.Item key={user.id} label={user.name} value={user.id} />
-                                    ))}
-                                    </Picker>
+                                    <DropDownPicker
+                                        open={open}
+                                        value={assignedTo}
+                                        items={items}
+                                        setOpen={setOpen}
+                                        setValue={setAssignedTo}
+                                        setItems={setItems}
+                                        placeholder="Select a user"
+                                        style={{ marginBottom: 15 }}
+                                        dropDownContainerStyle={{ borderColor: "#ccc" }}
+                                    />
                                 )}
                                 
                                 <View style={styles.buttonContainer}>
