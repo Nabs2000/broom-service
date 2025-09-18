@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react";
-import { View, Text, Pressable, ScrollView, Alert } from "react-native";
+import React, { useState, useEffect, useMemo } from "react";
+import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator} from "react-native";
 import { ArrowLeft, ArrowRight } from "lucide-react-native";
 import styles from "../styles/householdViewStyles";
+import { GET_HOUSEHOLD_URL } from '../config.json';
 
 type Member = {
   id: string;
@@ -14,6 +15,12 @@ type Task = {
   assigneeInitials: string; // matches Member.initials
   completed: boolean;
   date: Date;
+};
+
+type Household = {
+  id: string;
+  name: string;
+  members: string[];
 };
 
 const members: Member[] = [
@@ -121,7 +128,10 @@ function weekOffsetForDate(d: Date) {
 
 export default function HouseholdView() {
   // -1 = last week, 0 = this week, +1 = next week
+
   const [currentWeek, setCurrentWeek] = useState<number>(0);
+  const [household, setHousehold] = useState<Household | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // bucket tasks by week offset using a memo
   const tasksByOffset = useMemo(() => {
@@ -142,75 +152,111 @@ export default function HouseholdView() {
     Alert.alert("Task selected", `${task.title}\n${task.date.toDateString()}`);
   };
 
+  useEffect(() => {
+    const householdId = "fam_alpha"; // hardcoded for now
+
+    const fetchHousehold = async () => {
+      try {
+        const res = await fetch(`${GET_HOUSEHOLD_URL}?assigned_to=${encodeURIComponent(householdId)}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const data = await res.json();
+        setHousehold(data);
+      } catch (err) {
+        console.error("Error fetching household:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHousehold();
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator size="large" />;
+  }
+
   return (
-    <View style={styles.container}>
-      {/* Household name in header */}
-      <Text style={styles.householdName}>La Casa De Flores</Text>
+    // <View style={styles.container}>
 
-      {/* Week navigation (arrows) */}
-      <View style={styles.weekNav}>
-        <Pressable onPress={handlePrevWeek} style={styles.arrowButton}>
-          <ArrowLeft size={24} color="black" />
-        </Pressable>
+    //   {/* Household name in header */}
+    //   <Text style={styles.householdName}>La Casa De Flores</Text>
 
-        <Text style={styles.weekText}>
-          {currentWeek === 0
-            ? "This Week"
-            : currentWeek === -1
-            ? "Last Week"
-            : currentWeek === 1
-            ? "Next Week"
-            : `${currentWeek > 0 ? "+" : ""}${currentWeek} Week`}
-        </Text>
+    //   {/* Week navigation (arrows) */}
+    //   <View style={styles.weekNav}>
+    //     <Pressable onPress={handlePrevWeek} style={styles.arrowButton}>
+    //       <ArrowLeft size={24} color="black" />
+    //     </Pressable>
 
-        <Pressable onPress={handleNextWeek} style={styles.arrowButton}>
-          <ArrowRight size={24} color="black" />
-        </Pressable>
-      </View>
+    //     <Text style={styles.weekText}>
+    //       {currentWeek === 0
+    //         ? "This Week"
+    //         : currentWeek === -1
+    //         ? "Last Week"
+    //         : currentWeek === 1
+    //         ? "Next Week"
+    //         : `${currentWeek > 0 ? "+" : ""}${currentWeek} Week`}
+    //     </Text>
 
-      {/* Members + tasks */}
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        {members.map((member) => {
-          // tasks for this week for this member
-          const weekTasks = tasksByOffset[currentWeek] ?? [];
-          const memberTasks = weekTasks.filter(
-            (t) => t.assigneeInitials === member.initials
-          );
+    //     <Pressable onPress={handleNextWeek} style={styles.arrowButton}>
+    //       <ArrowRight size={24} color="black" />
+    //     </Pressable>
+    //   </View>
 
-          return (
-            <View key={member.id} style={styles.memberRow}>
-              {/* Member circle */}
-              <View style={styles.memberCircle}>
-                <Text style={styles.memberText}>{member.initials}</Text>
-              </View>
+    //   {/* Members + tasks */}
+    //   <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+    //     {members.map((member) => {
+    //       // tasks for this week for this member
+    //       const weekTasks = tasksByOffset[currentWeek] ?? [];
+    //       const memberTasks = weekTasks.filter(
+    //         (t) => t.assigneeInitials === member.initials
+    //       );
 
-              {/* Task grid for this member and week */}
-              <View style={styles.taskRow}>
-                {memberTasks.length === 0 ? (
-                  <View style={styles.noTaskBox}>
-                    <Text style={styles.noTaskText}>—</Text>
-                  </View>
-                ) : (
-                  memberTasks.map((task) => (
-                    <Pressable
-                      key={task.id}
-                      onPress={() => handleTaskPress(task)}
-                      style={({ pressed }) => [
-                        styles.taskBox,
-                        task.completed === true
-                          ? { backgroundColor: pressed ? "#86efac" : "#bbf7d0" } // green-300 : green-200
-                          : { backgroundColor: pressed ? "#93c5fd" : "#dbeafe" }, // blue-300 : blue-100
-                      ]}
-                    >
-                      <Text style={styles.taskText}>{task.title}</Text>
-                    </Pressable>
-                  ))
-                )}
-              </View>
-            </View>
-          );
-        })}
-      </ScrollView>
+    //       return (
+    //         <View key={member.id} style={styles.memberRow}>
+    //           {/* Member circle */}
+    //           <View style={styles.memberCircle}>
+    //             <Text style={styles.memberText}>{member.initials}</Text>
+    //           </View>
+
+    //           {/* Task grid for this member and week */}
+    //           <View style={styles.taskRow}>
+    //             {memberTasks.length === 0 ? (
+    //               <View style={styles.noTaskBox}>
+    //                 <Text style={styles.noTaskText}>—</Text>
+    //               </View>
+    //             ) : (
+    //               memberTasks.map((task) => (
+    //                 <Pressable
+    //                   key={task.id}
+    //                   onPress={() => handleTaskPress(task)}
+    //                   style={({ pressed }) => [
+    //                     styles.taskBox,
+    //                     task.completed === true
+    //                       ? { backgroundColor: pressed ? "#86efac" : "#bbf7d0" } // green-300 : green-200
+    //                       : { backgroundColor: pressed ? "#93c5fd" : "#dbeafe" }, // blue-300 : blue-100
+    //                   ]}
+    //                 >
+    //                   <Text style={styles.taskText}>{task.title}</Text>
+    //                 </Pressable>
+    //               ))
+    //             )}
+    //           </View>
+    //         </View>
+    //       );
+    //     })}
+    //   </ScrollView>
+    // </View>
+    <View style={{ padding: 16 }}>
+      <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+        Household: {household?.name}
+      </Text>
+      <Text>ID: {household?.id}</Text>
+      <Text>Members: {household?.members?.join(", ")}</Text>
     </View>
   );
 }
