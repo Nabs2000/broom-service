@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     color: "#fff",
-    fontSize: 40,
+    fontSize: 39,
     fontWeight: "bold",
   },
   text: {

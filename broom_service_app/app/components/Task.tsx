@@ -100,17 +100,17 @@ const Task = ({ task, onTaskUpdate, onTaskDelete }: TaskProps) => {
         <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
           <View style={styles.checkboxContainer}>
             {updating ? (
-              <ActivityIndicator size="small" color="#0000ff" style={styles.checkbox} />
+              <ActivityIndicator size="small" color="#0000ff" style={styles.checkboxTouchable} />
             ) : (
               <BouncyCheckBox
-                size={15}
+                size={18}
                 isChecked={isSelected}
                 onPress={handleCheckboxChange}
-                style={styles.checkbox}
+                style={styles.checkboxTouchable}
                 disabled={updating}
               />
             )}
-            <Text style={styles.label}>Completed?</Text>
+            <Text style={styles.completedText}>Completed?</Text>
           </View>
         </TouchableWithoutFeedback>
       </Animated.View>

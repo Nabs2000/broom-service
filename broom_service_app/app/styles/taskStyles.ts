@@ -2,26 +2,44 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   view: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 200,
-    width: "90%",
-    alignSelf: "center",
-    borderRadius: 12,
-    shadowColor: "#000",
+    padding: 10,  // reduce vertical padding
+    borderRadius: 10,
+    marginBottom: 10,
+    shadowColor: '#000',
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
   checkboxContainer: {
-    flexDirection: "row",
-    marginBottom: 20,
+    flexDirection: 'row',      // horizontal layout
+    alignItems: 'center',       // vertical center
+    alignSelf: 'flex-start',
+    marginTop: 8,
   },
   checkbox: {
-    alignSelf: "center",
+    marginRight: 6,
+  },
+  checkboxTouchable: {
+    width: 28,            // small fixed hit area
+    height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 0,
+    margin: 0,
+  },
+  completedText: {
+    marginLeft: 8, // Space between circle & text
+    fontSize: 14,
+    color: '#333',
   },
   label: {
-    margin: 8,
+    fontSize: 14,
+  },
+  completedContainer: {
+    flexDirection: 'row',
+    alignItems: 'center', // Circle + text on same line
+    marginTop: 6,
   },
   title: { fontSize: 20, fontWeight: "bold", color: "#333" },
   text: { fontSize: 12, marginTop: 5, color: "#333" },

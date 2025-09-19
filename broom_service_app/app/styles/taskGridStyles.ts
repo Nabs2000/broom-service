@@ -6,15 +6,22 @@ export default StyleSheet.create({
     padding: 16,
     backgroundColor: '#f5f5f5',
   },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 12,
+    color: '#2c3e50',
+  },
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    width: "100%"
   },
   taskWrapper: {
-    width: '48%', // Two items per row with some space between
-    marginBottom: 16,
-    borderRadius: 12,
+    width: '100%', // One item per row with some space between
+    marginBottom: 10,
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
     overflow: 'hidden',
     backgroundColor: 'white',
     shadowColor: '#000',
@@ -23,27 +30,24 @@ export default StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  taskContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center', // Keeps "Completed" + circle aligned
+  },
+  emptyState: {
+    textAlign: 'center',
+    color: '#7f8c8d',
+    fontStyle: 'italic',
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
   errorText: {
     color: '#e74c3c',
     textAlign: 'center',
     marginVertical: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    marginVertical: 16,
-    color: '#2c3e50',
-  },
-  emptyState: {
-    textAlign: 'center',
-    marginTop: 20,
-    color: '#7f8c8d',
-    fontStyle: 'italic',
   },
 });
