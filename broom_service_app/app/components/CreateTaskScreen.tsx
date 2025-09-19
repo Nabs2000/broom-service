@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, TouchableWithoutFeedback, Keyboard, ActivityIndicator } from "react-native";
-import { CREATE_TASK_URL } from '../config.json';
+import { CREATE_TASK_URL } from '../../lib/config.json';
 import { Calendar } from 'react-native-calendars';
 import { MaterialIcons } from '@expo/vector-icons';
 import { assignedToUser, UserType } from "../utils/userQueries";
