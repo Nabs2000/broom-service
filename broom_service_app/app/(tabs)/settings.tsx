@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, Switch, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Switch, TouchableOpacity, ScrollView } from 'react-native';
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../../contexts/AuthContext';
 
 type SettingItemProps = {
   icon: React.ReactNode;
@@ -23,9 +23,17 @@ function SettingItem({ icon, title, onPress, rightElement }: SettingItemProps) {
 }
 
 export default function SettingsScreen() {
-  const { signOut } = useAuth();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
+  const {user, signOut} = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   const toggleNotifications = () => {
     setNotificationsEnabled(prev => !prev);
@@ -36,81 +44,88 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Settings</Text>
-      </View>
+    <ScrollView style={styles.scrollView}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Settings</Text>
+        </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Preferences</Text>
-        <View style={styles.settingsContainer}>
-          <SettingItem
-            icon={<Ionicons name="notifications-outline" size={22} color="#007AFF" />}
-            title="Notifications"
-            rightElement={
-              <Switch
-                value={notificationsEnabled}
-                onValueChange={toggleNotifications}
-                trackColor={{ false: '#E5E5EA', true: '#007AFF' }}
-                thumbColor="#FFFFFF"
-              />
-            }
-          />
-          <SettingItem
-            icon={<Ionicons name="moon-outline" size={22} color="#007AFF" />}
-            title="Dark Mode"
-            rightElement={
-              <Switch
-                value={darkMode}
-                onValueChange={toggleDarkMode}
-                trackColor={{ false: '#E5E5EA', true: '#007AFF' }}
-                thumbColor="#FFFFFF"
-              />
-            }
-          />
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Preferences</Text>
+          <View style={styles.settingsContainer}>
+            <SettingItem
+              icon={<Ionicons name="notifications-outline" size={22} color="#007AFF" />}
+              title="Notifications"
+              rightElement={
+                <Switch
+                  value={notificationsEnabled}
+                  onValueChange={toggleNotifications}
+                  trackColor={{ false: '#E5E5EA', true: '#007AFF' }}
+                  thumbColor="#FFFFFF"
+                />
+              }
+            />
+            <SettingItem
+              icon={<Ionicons name="moon-outline" size={22} color="#007AFF" />}
+              title="Dark Mode"
+              rightElement={
+                <Switch
+                  value={darkMode}
+                  onValueChange={toggleDarkMode}
+                  trackColor={{ false: '#E5E5EA', true: '#007AFF' }}
+                  thumbColor="#FFFFFF"
+                />
+              }
+            />
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Account</Text>
+          <View style={styles.settingsContainer}>
+            <SettingItem
+              icon={<Ionicons name="person-outline" size={22} color="#007AFF" />}
+              title="Edit Profile"
+            />
+            <SettingItem
+              icon={<Ionicons name="lock-closed-outline" size={22} color="#007AFF" />}
+              title="Change Password"
+            />
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Support</Text>
+          <View style={styles.settingsContainer}>
+            <SettingItem
+              icon={<Ionicons name="help-circle-outline" size={22} color="#007AFF" />}
+              title="Help & Support"
+            />
+            <SettingItem
+              icon={<Ionicons name="document-text-outline" size={22} color="#007AFF" />}
+              title="Terms & Privacy"
+            />
+            <SettingItem
+              icon={<Ionicons name="information-circle-outline" size={22} color="#007AFF" />}
+              title="About"
+            />
+            <SettingItem
+              icon={<Ionicons name="log-out-outline" size={22} color="#007AFF" />}
+              title="Sign Out"
+              onPress={handleSignOut}
+            />
+          </View>
         </View>
       </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Account</Text>
-        <View style={styles.settingsContainer}>
-          <SettingItem
-            icon={<Ionicons name="person-outline" size={22} color="#007AFF" />}
-            title="Edit Profile"
-          />
-          <SettingItem
-            icon={<Ionicons name="lock-closed-outline" size={22} color="#007AFF" />}
-            title="Change Password"
-          />
-        </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Support</Text>
-        <View style={styles.settingsContainer}>
-          <SettingItem
-            icon={<Ionicons name="help-circle-outline" size={22} color="#007AFF" />}
-            title="Help & Support"
-          />
-          <SettingItem
-            icon={<Ionicons name="document-text-outline" size={22} color="#007AFF" />}
-            title="Terms & Privacy"
-          />
-          <SettingItem
-            icon={<Ionicons name="information-circle-outline" size={22} color="#007AFF" />}
-            title="About"
-          />
-        </View>
-      </View>
-
-      <TouchableOpacity style={styles.signOutButton} onPress={signOut}>
-        <Text style={styles.signOutText}>Sign Out</Text>
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+  },
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',

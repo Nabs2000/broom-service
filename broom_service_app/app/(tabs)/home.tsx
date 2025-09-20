@@ -1,29 +1,21 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { useAuth } from '../contexts/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function HomeScreen() {
-  const { user, signOut } = useAuth();
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Welcome back!</Text>
-        <Text style={styles.subtitle}>{user?.email}</Text>
       </View>
       
       <View style={styles.content}>
         <View style={styles.card}>
           <FontAwesome name="user-circle" size={48} color="#007AFF" />
-          <Text style={styles.cardTitle}>Hello, {user?.email?.split('@')[0] || 'User'}</Text>
+          <Text style={styles.cardTitle}>Hello, User</Text>
           <Text style={styles.cardText}>
             You're now logged in and can access all the features of our app.
           </Text>
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={signOut}>
-          <Text style={styles.buttonText}>Sign Out</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -46,10 +38,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
     marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: 'rgba(255, 255, 255, 0.8)',
   },
   content: {
     flex: 1,

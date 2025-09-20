@@ -1,4 +1,4 @@
-import { ASSIGN_TO_URL } from "../../lib/config.json";
+import { ASSIGN_TO_URL } from "../lib/config.json";
 
 export interface UserType {
     id: string;

@@ -1,4 +1,4 @@
-import { UPDATE_TASK_URL, FETCH_TASKS_URL, DELETE_TASKS_URL } from '../../lib/config.json';
+import { UPDATE_TASK_URL, FETCH_TASKS_URL, DELETE_TASKS_URL } from '../lib/config.json';
 
 // Define the TaskType interface that represents the structure of a task
 // This interface is used throughout the application to ensure type safety

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator, ScrollView } from 'react-native';
 // Import our custom hook for fetching tasks
-import { fetchUserTasks, deleteTask } from '../utils/taskQueries';
+import { fetchUserTasks, deleteTask } from '../../utils/taskQueries';
 // Import the Task component to render individual tasks
 import Task from './Task';
 // Import styles specific to the TaskGrid component

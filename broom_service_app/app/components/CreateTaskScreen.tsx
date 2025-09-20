@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, TouchableWi
 import { CREATE_TASK_URL } from '../../lib/config.json';
 import { Calendar } from 'react-native-calendars';
 import { MaterialIcons } from '@expo/vector-icons';
-import { assignedToUser, UserType } from "../utils/userQueries";
+import { assignedToUser, UserType } from "../../utils/userQueries";
 import DropDownPicker from "react-native-dropdown-picker";
 
 interface CreateTaskScreenProps {

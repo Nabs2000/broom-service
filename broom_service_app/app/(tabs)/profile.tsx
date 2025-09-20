@@ -1,9 +1,8 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useAuth } from '../contexts/AuthContext';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
 export default function ProfileScreen() {
-  const { user, signOut } = useAuth();
+
 
   return (
     <View style={styles.container}>
@@ -11,25 +10,20 @@ export default function ProfileScreen() {
         <View style={styles.avatarContainer}>
           <FontAwesome name="user-circle" size={80} color="#007AFF" />
         </View>
-        <Text style={styles.name}>{user?.email?.split('@')[0] || 'User'}</Text>
-        <Text style={styles.email}>{user?.email}</Text>
+        <Text style={styles.name}>User</Text>
       </View>
       
       <View style={styles.content}>
         <View style={styles.infoCard}>
           <View style={styles.infoRow}>
             <FontAwesome name="envelope" size={20} color="#8E8E93" />
-            <Text style={styles.infoText}>{user?.email}</Text>
+            <Text style={styles.infoText}>user@user.com</Text>
           </View>
           <View style={styles.infoRow}>
             <FontAwesome name="calendar" size={20} color="#8E8E93" />
-            <Text style={styles.infoText}>Member since {new Date(user?.created_at || '').toLocaleDateString()}</Text>
+            <Text style={styles.infoText}>Member since 01/01/2020</Text>
           </View>
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={signOut}>
-          <Text style={styles.buttonText}>Sign Out</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
