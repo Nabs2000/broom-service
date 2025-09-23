@@ -7,6 +7,7 @@ import { fetchUserTasks, deleteTask } from '../utils/taskQueries';
 import Task from './Task';
 // Import styles specific to the TaskGrid component
 import styles from '../styles/taskGridStyles';
+import CreateTaskScreen from './CreateTaskScreen';
 
 // Define the shape of a task object
 interface TaskType {
@@ -160,6 +161,7 @@ const TaskGrid: React.FC<TaskGridProps> = ({ userId }) => {
       ) : (
         <Text style={styles.emptyState}>No completed tasks yet</Text>
       )}
+      <CreateTaskScreen familyId='fam_alpha' onTaskCreated={loadTasks} />
     </ScrollView>
   );
 };
