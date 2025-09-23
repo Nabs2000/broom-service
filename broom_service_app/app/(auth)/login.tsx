@@ -36,10 +36,10 @@ export default function Auth() {
           try {
             const userData: UserType = {
               id: session.user.id,
-              name: `${firstName} ${lastName}`.trim(),
-              family_id: '', // You might want to generate or set a default family_id
-              email: session.user.email || undefined,
-              is_admin: isAdmin
+              name: session.user.user_metadata.full_name,
+              family_id: 'default-family-id', // You might want to generate or set a default family_id
+              email: session.user.email,
+              is_admin: session.user.user_metadata.is_admin
             };
             
             console.log('User data:', userData);

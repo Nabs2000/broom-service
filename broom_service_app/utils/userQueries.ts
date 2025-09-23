@@ -10,19 +10,15 @@ export interface UserType {
 }
 
 export const createUser = async (user: UserType) => {
-    try {
-        console.log('Creating user with data:', user);
-        
-        // Ensure required fields are present
+    try {        
         const userData = {
             id: user.id,
             name: user.name,
-            family_id: user.family_id || 'default-family-id',
-            email: user.email || '',
-            is_admin: user.is_admin || false
+            family_id: user.family_id,
+            email: user.email,
+            is_admin: user.is_admin
         };
 
-        console.log('Sending to', CREATE_USER_URL);
         const response = await fetch(CREATE_USER_URL, {
             method: 'POST',
             headers: {
@@ -31,27 +27,18 @@ export const createUser = async (user: UserType) => {
             body: JSON.stringify(userData),
         });
 
-        console.log('Response status:', response.status);
-        
-        // Get response as text first to handle potential non-JSON responses
         const responseText = await response.text();
-        console.log('Raw response:', responseText);
-        
         let responseData;
         try {
             responseData = responseText ? JSON.parse(responseText) : {};
         } catch (e) {
-            console.error('Failed to parse JSON response:', e);
-            console.error('Response headers:', Object.fromEntries(response.headers.entries()));
             throw new Error(`Invalid JSON response from server: ${responseText.substring(0, 100)}`);
         }
         
         if (!response.ok) {
-            console.error('Error response:', responseData);
             throw new Error(responseData.message || `Failed to create user: ${response.status} ${response.statusText}`);
         }
 
-        console.log('User created successfully:', responseData);
         return responseData;
     } catch (error) {
         console.error('Error in createUser:', error);
@@ -74,10 +61,8 @@ export const assignedToUser = async (familyId: string): Promise<UserType[]> => {
         }
 
         const data = await response.json();
-        console.log("API raw response:", data); 
         return data; 
     } catch (error) {
-        console.error("Error fetching users:", error);
         throw error;
     }
 };
