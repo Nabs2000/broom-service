@@ -1,7 +1,13 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
+import UserView from '../../components/userView';
 
 export default function HomeScreen() {
+    const {id} = useLocalSearchParams();
+    const userId = Array.isArray(id) ? id[0] : id;
+    console.log("userId", userId)
+    
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -9,13 +15,7 @@ export default function HomeScreen() {
       </View>
       
       <View style={styles.content}>
-        <View style={styles.card}>
-          <FontAwesome name="user-circle" size={48} color="#007AFF" />
-          <Text style={styles.cardTitle}>Hello, User</Text>
-          <Text style={styles.cardText}>
-            You're now logged in and can access all the features of our app.
-          </Text>
-        </View>
+        <UserView userId={userId} />
       </View>
     </View>
   );

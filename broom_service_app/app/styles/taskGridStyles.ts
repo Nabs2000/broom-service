@@ -35,6 +35,18 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center', // Keeps "Completed" + circle aligned
   },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyStateText: {
+    textAlign: 'center',
+    color: '#7f8c8d',
+    fontSize: 16,
+    marginBottom: 20,
+  },
   emptyState: {
     textAlign: 'center',
     color: '#7f8c8d',

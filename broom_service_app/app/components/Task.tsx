@@ -59,6 +59,7 @@ const Task = ({ task, onTaskUpdate, onTaskDelete }: TaskProps) => {
     if (!taskData) return;
     setUpdating(true);
     try {
+      console.log("Marking task as completed: ", taskData.id);
       const updatedTask = await updateTask(taskData.id, isChecked);
       setTaskData(updatedTask);
       // Notify parent component about the update

@@ -55,8 +55,7 @@ const TaskGrid: React.FC<TaskGridProps> = ({ userId }) => {
       setError(null);
     } catch (err) {
       // Log and handle any errors
-      console.error('Failed to load tasks:', err);
-      setError('Failed to load tasks. Please try again.');
+      setError('No tasks found for this user.');
     } finally {
       // Always hide loading indicator when done
       setLoading(false);
@@ -109,11 +108,12 @@ const TaskGrid: React.FC<TaskGridProps> = ({ userId }) => {
     );
   }
 
-  // Show error message if there was an error loading tasks
-  if (error) {
+  // Show empty state with create task button when no tasks are found
+  if (error === 'No tasks found for this user.') {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.errorText}>{error}</Text>
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyStateText}>No tasks yet. Create your first task to get started!</Text>
+        <CreateTaskScreen familyId='fam_alpha' onTaskCreated={loadTasks} />
       </View>
     );
   }

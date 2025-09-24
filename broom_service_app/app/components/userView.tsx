@@ -2,20 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import styles from '../styles/userViewStyles';
 import { GET_USER_URL } from '../../lib/config.json';
-import CreateTaskScreen from './CreateTaskScreen';
 import TaskGrid from './TaskGrid';
 
-export default function UserView() {
+interface UserViewProps {
+    userId: string;
+  }
+
+export default function UserView( {userId}: UserViewProps) {
     const [userName, setUserName] = useState('Loading...');
     const [pendingTasks, setPendingTasks] = useState<string[]>([]);
     const [completedTasks, setCompletedTasks] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const userId = 'user_001';
 
     useEffect(() => {
         const lurl = `${GET_USER_URL}?userId=${userId}`;
-
         fetch(lurl)
             .then(res => {
                 if (!res.ok) {

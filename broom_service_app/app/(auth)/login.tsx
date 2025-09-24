@@ -72,21 +72,35 @@ export default function Auth() {
   }, [firstName, lastName]);
 
   async function signInWithEmail() {
-    setLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    })
-
-    if (error) {
-        Alert.alert(error.message)
-        setLoading(false)
-        return // Exit if there's an error
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+  
+      if (error) {
+        Alert.alert('Sign In Error', error.message);
+        return;
       }
-      
-      // Only navigate if there's no error
-      router.replace('/(tabs)/home')
-      setLoading(false)
+  
+      if (data?.user) {
+        console.log("User data: ", data.user)
+        // Navigate with user ID as a parameter
+        router.replace({
+          pathname: '/(tabs)/home/[id]',
+          params: { id: data.user.id }
+        });
+      } else {
+        // Fallback in case user data isn't available
+        router.replace('/(tabs)/home');
+      }
+    } catch (error) {
+      console.error('Error during sign in:', error);
+      Alert.alert('Error', 'An unexpected error occurred during sign in.');
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function signUpWithEmail({firstName, lastName, email, password, isAdmin}: {firstName: string, lastName: string, email: string, password: string, isAdmin: boolean}) {
