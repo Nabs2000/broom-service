@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({ familyId }) => {
+const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({ familyId, onTaskCreated }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [calendarVisible, setCalendarVisible] = useState(false);
     const [name, setName] = useState('');
@@ -167,6 +167,10 @@ const CreateTaskScreen: React.FC<CreateTaskScreenProps> = ({ familyId }) => {
                 setDueDate('');
                 setAssignedTo('');
                 setModalVisible(false);
+
+                setTimeout(() => {
+                    onTaskCreated?.();
+                }, 200)
             } else {
                 // Error creating task
             }
