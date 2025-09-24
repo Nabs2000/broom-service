@@ -2,19 +2,30 @@ import React, { useState, useEffect, useMemo } from "react";
 import { View, Text, Pressable, ScrollView, Alert, ActivityIndicator} from "react-native";
 import { ArrowLeft, ArrowRight } from "lucide-react-native";
 import styles from "../styles/householdViewStyles";
-import { GET_HOUSEHOLD_URL } from '../config.json';
+import { GET_HOUSEHOLD_URL, FETCH_TASKS_URL } from '../config.json';
 
-type Member = {
-  id: string;
-  initials: string;
+type Task = { 
+  id: number; 
+  name: string;
+  assigned_to: string;
+  date_completed: string;
+  due_date: string;
+  description: string;
+  status: string;
 };
 
-type Task = {
-  id: number;
-  title: string;
-  assigneeInitials: string; // matches Member.initials
-  completed: boolean;
-  date: Date;
+type Member ={
+  id: string;
+  email: string;
+  family_id: string;
+  is_admin: boolean;
+  name: string;
+  tasks: []; // list of task id strings
+}
+
+type UserTasks = {
+  userId: string;
+  tasks: Task[];
 };
 
 type Household = {
@@ -23,99 +34,28 @@ type Household = {
   members: string[];
 };
 
-const members: Member[] = [
-  { id: "1", initials: "NS" },
-  { id: "2", initials: "YQ" },
-  { id: "3", initials: "IE" },
-  { id: "4", initials: "KD" },
-];
-
-// --- Mock tasks (dates spread across last/this/next week) ---
-const mockTasks: Task[] = [
-  // last week
-  {
-    id: 1,
-    title: "Take out trash",
-    assigneeInitials: "NS",
-    completed: true,
-    date: new Date(new Date().setDate(new Date().getDate() - 6)),
-  },
-  {
-    id: 2,
-    title: "Organize pantry",
-    assigneeInitials: "IE",
-    completed: true,
-    date: new Date(new Date().setDate(new Date().getDate() - 10)),
-  },
-  {
-    id: 3,
-    title: "Vacuum bedroom",
-    assigneeInitials: "YQ",
-    completed: false,
-    date: new Date(new Date().setDate(new Date().getDate() - 6))
-  },
-  {
-    id: 4,
-    title: "Vacuum ceiling idk",
-    assigneeInitials: "YQ",
-    completed: false,
-    date: new Date(new Date().setDate(new Date().getDate() - 10))
-  },
-
-
-  // this week
-  {
-    id: 4,
-    title: "Vacuum living room",
-    assigneeInitials: "YQ",
-    completed: false,
-    date: new Date(), // today
-  },
-  {
-    id: 5,
-    title: "Wash dishes",
-    assigneeInitials: "IE",
-    completed: false,
-    date: new Date(new Date().setDate(new Date().getDate() - 2)),
-  },
-  {
-    id: 6,
-    title: "Clean bathroom",
-    assigneeInitials: "KD",
-    completed: true,
-    date: new Date(new Date().setDate(new Date().getDate() + 2)),
-  },
-
-  // next week
-  {
-    id: 7,
-    title: "Do laundry",
-    assigneeInitials: "NS",
-    completed: false,
-    date: new Date(new Date().setDate(new Date().getDate() + 8)),
-  },
-  {
-    id: 8,
-    title: "Mop kitchen floor",
-    assigneeInitials: "YQ",
-    completed: false,
-    date: new Date(new Date().setDate(new Date().getDate() + 10)),
-  },
-  {
-    id: 9,
-    title: "Wipe counters",
-    assigneeInitials: "KD",
-    completed: false,
-    date: new Date(new Date().setDate(new Date().getDate() + 12)),
-  },
-];
-
 // Helper: start-of-week (Sunday) for a given date
 function startOfWeek(date: Date) {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
   d.setDate(d.getDate() - d.getDay()); // Sunday as start
   return d;
+}
+
+function getInitials(fullName: string) {
+  if (!fullName || typeof fullName !== 'string') {
+    return ''; // Handle empty or non-string input
+  }
+
+  const nameParts = fullName.trim().split(/\s+/); // Split by one or more spaces
+  let initials = '';
+
+  for (let i = 0; i < nameParts.length; i++) {
+    if (nameParts[i].length > 0) {
+      initials += nameParts[i][0].toUpperCase(); // Take the first letter and convert to uppercase
+    }
+  }
+  return initials;
 }
 
 // Helper: week offset relative to current week start (0 = this week)
@@ -131,25 +71,26 @@ export default function HouseholdView() {
 
   const [currentWeek, setCurrentWeek] = useState<number>(0);
   const [household, setHousehold] = useState<Household | null>(null);
+  const [userTasks, setUserTasks] = useState<UserTasks[]>([]);
   const [loading, setLoading] = useState(true);
 
   // bucket tasks by week offset using a memo
-  const tasksByOffset = useMemo(() => {
-    const map: Record<number, Task[]> = {};
-    for (const t of mockTasks) {
-      const offset = weekOffsetForDate(t.date);
-      if (!map[offset]) map[offset] = [];
-      map[offset].push(t);
-    }
-    return map; // e.g. { -1: [...], 0: [...], 1: [...] }
-  }, []);
+  // const tasksByOffset = useMemo(() => {
+  //   const map: Record<number, Task[]> = {};
+  //   for (const t of mockTasks) {
+  //     const offset = weekOffsetForDate(t.date);
+  //     if (!map[offset]) map[offset] = [];
+  //     map[offset].push(t);
+  //   }
+  //   return map; // e.g. { -1: [...], 0: [...], 1: [...] }
+  // }, []);
 
   const handlePrevWeek = () => setCurrentWeek((s) => s - 1);
   const handleNextWeek = () => setCurrentWeek((s) => s + 1);
 
   const handleTaskPress = (task: Task) => {
-    console.log("Task clicked:", task.title, "date:", task.date.toISOString());
-    Alert.alert("Task selected", `${task.title}\n${task.date.toDateString()}`);
+    console.log("Task clicked:", task.name, "date:", task.due_date);
+    Alert.alert("Task selected", `${task.name}\n${task.due_date}`);
   };
 
   useEffect(() => {
@@ -157,15 +98,44 @@ export default function HouseholdView() {
 
     const fetchHousehold = async () => {
       try {
-        const res = await fetch(`${GET_HOUSEHOLD_URL}?assigned_to=${encodeURIComponent(householdId)}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const householdRes = await fetch(
+          `${GET_HOUSEHOLD_URL}?id=${encodeURIComponent(householdId)}`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+          }
+        );        
 
-        const data = await res.json();
+        const data = await householdRes.json();
         setHousehold(data);
+
+        if (data.members && data.members.length > 0) {
+          const taskResults = await Promise.all(
+            data.members.map(async (uid: string) => {
+              try {
+                const r = await fetch(`${FETCH_TASKS_URL}?assigned_to=${uid}`);
+                if (!r.ok) return { userId: uid, tasks: [] };
+  
+                const tasksJson = await r.json();
+  
+                // convert date strings to Date objects
+                const normalized = tasksJson.map((t: any, idx: number) => ({
+                  id: idx,
+                  name: t.name,
+                  assigneeInitials: t.assigned_to ?? uid, // fallback
+                  completed: t.completed ?? false,
+                  date: new Date(t.date), // assumes ISO string
+                }));
+  
+                return { userId: uid, tasks: normalized };
+              } catch (err) {
+                console.error("Error fetching tasks for user", uid, err);
+                return { userId: uid, tasks: [] };
+              }
+            })
+          );
+          setUserTasks(taskResults);
+        }
       } catch (err) {
         console.error("Error fetching household:", err);
       } finally {
@@ -184,7 +154,7 @@ export default function HouseholdView() {
     // <View style={styles.container}>
 
     //   {/* Household name in header */}
-    //   <Text style={styles.householdName}>La Casa De Flores</Text>
+    //   <Text style={styles.householdName}>household?.name</Text>
 
     //   {/* Week navigation (arrows) */}
     //   <View style={styles.weekNav}>
@@ -209,7 +179,7 @@ export default function HouseholdView() {
 
     //   {/* Members + tasks */}
     //   <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-    //     {members.map((member) => {
+    //     {household?.members.map((member) => {
     //       // tasks for this week for this member
     //       const weekTasks = tasksByOffset[currentWeek] ?? [];
     //       const memberTasks = weekTasks.filter(
@@ -236,12 +206,12 @@ export default function HouseholdView() {
     //                   onPress={() => handleTaskPress(task)}
     //                   style={({ pressed }) => [
     //                     styles.taskBox,
-    //                     task.completed === true
+    //                     task.status === "completed"
     //                       ? { backgroundColor: pressed ? "#86efac" : "#bbf7d0" } // green-300 : green-200
     //                       : { backgroundColor: pressed ? "#93c5fd" : "#dbeafe" }, // blue-300 : blue-100
     //                   ]}
     //                 >
-    //                   <Text style={styles.taskText}>{task.title}</Text>
+    //                   <Text style={styles.taskText}>{task.name}</Text>
     //                 </Pressable>
     //               ))
     //             )}
@@ -257,6 +227,25 @@ export default function HouseholdView() {
       </Text>
       <Text>ID: {household?.id}</Text>
       <Text>Members: {household?.members?.join(", ")}</Text>
+
+      <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 12 }}>
+        UserTasks
+      </Text>
+      {userTasks.map((ut) => (
+        <View key={ut.userId} style={{ marginBottom: 16 }}>
+          <Text style={{ fontWeight: "bold" }}>User: {ut.userId}</Text>
+          {ut.tasks.length === 0 ? (
+            <Text>No tasks</Text>
+          ) : (
+            ut.tasks.map((task) => (
+            <Text>
+              • {task.name} –{" "}
+              {task.due_date ? new Date(task.due_date).toLocaleDateString() : "No due date"}
+            </Text>
+            ))
+          )}
+        </View>
+      ))}
     </View>
   );
 }
