@@ -1,75 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import { Alert, StyleSheet, View, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Text } from 'react-native'
-import { supabase } from '../../lib/supabase'
-import { Button, Input } from '@rneui/themed'
-import {useRouter} from 'expo-router'
-import Title from '../components/Title'
-import {UserType, createUser} from '../../utils/userQueries'
-import DropDownPicker from "react-native-dropdown-picker";
+import React, { useState } from 'react';
+import { Alert, StyleSheet, View, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Text, TouchableOpacity } from 'react-native';
+import { supabase } from '../../lib/supabase';
+import { Button, Input } from '@rneui/themed';
+import { useRouter } from 'expo-router';
+import Title from '../components/Title';
 
-export default function Auth() {
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [open, setOpen] = useState(false);
-  const [items, setItems] = useState([
-    {label: 'Yes', value: true},
-    {label: 'No', value: false}
-  ]);
-  const router = useRouter()
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
 
-  // Listen for auth state changes to detect email verification and handle user creation
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event, session);
-      if (event === 'SIGNED_IN' && session?.user) {
-        // Check if we've already processed this user
-        const { data: { user } } = await supabase.auth.getUser();
-        console.log('User:', user);
-        const isProcessed = user?.user_metadata?.dynamodb_created;
-        
-        if (!isProcessed) {
-          try {
-            const userData: UserType = {
-              id: session.user.id,
-              name: session.user.user_metadata.full_name,
-              family_id: 'default-family-id', // You might want to generate or set a default family_id
-              email: session.user.email,
-              is_admin: session.user.user_metadata.is_admin
-            };
-            
-            console.log('User data:', userData);
-            // Create user in DynamoDB
-            // Do error handling for createUser
-            try {
-              await createUser(userData);
-            } catch (error) {
-              console.error('Error creating user:', error);
-              Alert.alert('Error', 'An unexpected error occurred during user creation.');
-              return;
-            }
-            
-            // Mark user as processed in Supabase
-            await supabase.auth.updateUser({
-              data: { dynamodb_created: true }
-            });
-            
-            console.log('User created in DynamoDB and marked as processed');
-          } catch (error) {
-            console.error('Error in user creation flow:', error);
-          }
-        }
-      }
-    });
-
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [firstName, lastName]);
+  const handleSignUpPress = () => {
+    router.push('/(auth)/signup');
+  };
 
   async function signInWithEmail() {
     setLoading(true);
@@ -85,15 +30,12 @@ export default function Auth() {
       }
   
       if (data?.user) {
-        console.log("User data: ", data.user)
+        console.log("User data: ", data.user);
         // Navigate with user ID as a parameter
         router.replace({
           pathname: '/(tabs)/home/[id]',
           params: { id: data.user.id }
         });
-      } else {
-        // Fallback in case user data isn't available
-        router.replace('/(tabs)/home');
       }
     } catch (error) {
       console.error('Error during sign in:', error);
@@ -103,130 +45,35 @@ export default function Auth() {
     }
   }
 
-  async function signUpWithEmail({firstName, lastName, email, password, isAdmin}: {firstName: string, lastName: string, email: string, password: string, isAdmin: boolean}) {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            full_name: `${firstName} ${lastName}`.trim(),
-            is_admin: isAdmin
-          }
-        }
-      });
-
-      if (error) {
-        Alert.alert('Signup Error', error.message);
-        return;
-      }
-
-      if (!data.session) {
-        Alert.alert(
-          'Verify Your Email',
-          'Please check your email and click the verification link to complete your registration.'
-        );
-      }
-    } catch (error) {
-      console.error('Error during signup:', error);
-      Alert.alert('Error', 'An unexpected error occurred during signup.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  // Close dropdown when keyboard appears to prevent layout issues
-  useEffect(() => {
-    const keyboardShowListener = Keyboard.addListener('keyboardDidShow', () => {
-      if (open) setOpen(false);
-    });
-    return () => {
-      keyboardShowListener.remove();
-    };
-  }, [open]);
-
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
     >
-      <TouchableWithoutFeedback onPress={() => {
-        Keyboard.dismiss();
-        if (open) setOpen(false);
-      }}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView 
           contentContainerStyle={styles.scrollViewContent}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={!open} // Disable scrolling when dropdown is open
         >
           <View style={styles.container}>
             <Title />
             
-            <View style={[styles.verticallySpaced, styles.mt20]}>
-              <Text style={styles.label}>Is Admin?</Text>
-              <DropDownPicker
-                open={open}
-                value={isAdmin}
-                items={items}
-                setOpen={setOpen}
-                setValue={setIsAdmin}
-                setItems={setItems}
-                placeholder="Select user type"
-                style={styles.dropdown}
-                dropDownContainerStyle={[
-                  styles.dropdownContainer,
-                  Platform.OS === 'ios' && { position: 'relative', top: 0, marginTop: 5 }
-                ]}
-                listMode="MODAL" // This prevents the VirtualizedList nesting issue
-                modalProps={{
-                  animationType: 'fade',
-                }}
-                modalTitle="Select user type"
-                modalContentContainerStyle={styles.modalContent}
-                zIndex={3000}
-                zIndexInverse={1000}
-              />
-            </View>
+            <Text style={styles.welcomeText}>Welcome back!</Text>
+            <Text style={styles.subtitleText}>Sign in to continue</Text>
             
             <View style={[styles.verticallySpaced, styles.mt20]}>
-              <Input 
-                label="First Name"
-                leftIcon={{ type: 'font-awesome', name: 'user' }}
-                onChangeText={(text) => setFirstName(text)}
-                value={firstName}
-                placeholder="First Name"
-                autoCapitalize={'words'}
-              />
-            </View>
-            
-            <View style={styles.verticallySpaced}>
-              <Input
-                label="Last Name"
-                leftIcon={{ type: 'font-awesome', name: 'user' }}
-                onChangeText={(text) => setLastName(text)}
-                value={lastName}
-                placeholder="Last Name"
-                autoCapitalize={'words'}
-              />
-            </View>
-            
-            <View style={styles.verticallySpaced}>
               <Input
                 label="Email"
                 leftIcon={{ type: 'font-awesome', name: 'envelope' }}
-                onChangeText={(text) => setEmail(text)}
+                onChangeText={setEmail}
                 value={email}
                 placeholder="email@address.com"
-                autoCapitalize={'none'}
+                autoCapitalize="none"
                 keyboardType="email-address"
                 autoComplete="email"
               />
             </View>
-            
+
             <View style={styles.verticallySpaced}>
               <Input
                 label="Password"
@@ -236,80 +83,87 @@ export default function Auth() {
                   name: showPassword ? 'eye-slash' : 'eye',
                   onPress: () => setShowPassword(!showPassword),
                 }}
-                onChangeText={(text) => setPassword(text)}
+                onChangeText={setPassword}
                 value={password}
                 secureTextEntry={!showPassword}
-                placeholder="Password"
-                autoCapitalize={'none'}
-                autoComplete="password"
+                placeholder="Enter your password"
+                autoCapitalize="none"
+                autoComplete="current-password"
               />
             </View>
-            
-            <View style={[styles.verticallySpaced, styles.buttonContainer]}>
-              <Button 
-                title="Sign in" 
-                disabled={loading} 
-                onPress={() => signInWithEmail()} 
-                containerStyle={styles.button}
+
+            <View style={[styles.verticallySpaced, styles.mt20]}>
+              <Button
+                title={loading ? 'Signing In...' : 'Sign In'}
+                disabled={loading}
+                onPress={signInWithEmail}
+                buttonStyle={styles.signInButton}
+                titleStyle={styles.buttonText}
               />
-              <Button 
-                title="Sign up" 
-                disabled={loading} 
-                onPress={() => signUpWithEmail({firstName, lastName, email, password, isAdmin})} 
-                containerStyle={styles.button}
-              />
+            </View>
+
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>Don't have an account? </Text>
+              <TouchableOpacity onPress={handleSignUpPress} disabled={loading}>
+                <Text style={styles.signupLink}>Sign up</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    paddingBottom: 40,
-  },
-  scrollViewContent: {
-    flexGrow: 1,
     justifyContent: 'center',
   },
-  label: {
-    marginBottom: 8,
-    fontSize: 16,
-    color: '#86939e',
-  },
-  dropdown: {
-    borderColor: '#86939e',
-    borderRadius: 4,
-    paddingHorizontal: 10,
-  },
-  dropdownContainer: {
-    borderColor: '#86939e',
-    marginTop: 4,
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    margin: 20,
-    borderRadius: 8,
-    padding: 15,
-  },
-  buttonContainer: {
+  welcomeText: {
+    fontSize: 28,
+    fontWeight: 'bold',
     marginTop: 20,
-    width: '100%',
+    marginBottom: 5,
+    textAlign: 'center',
   },
-  button: {
-    marginVertical: 8,
-    width: '100%',
+  subtitleText: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 30,
+    textAlign: 'center',
   },
   verticallySpaced: {
-    paddingTop: 4,
-    paddingBottom: 4,
+    paddingVertical: 8,
     alignSelf: 'stretch',
   },
   mt20: {
     marginTop: 20,
   },
-})
+  signInButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: 8,
+    paddingVertical: 14,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  signupContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  signupText: {
+    color: '#666',
+  },
+  signupLink: {
+    color: '#007AFF',
+    fontWeight: '600',
+  },
+  scrollViewContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
+});
