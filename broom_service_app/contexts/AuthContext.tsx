@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { createUser, UserType } from '../utils/userQueries';
+import { Alert } from 'react-native';
 
 type AuthContextType = {
   session: Session | null;
@@ -56,6 +58,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (event === 'SIGNED_OUT') {
           setSession(null);
           setUser(null);
+        }
+
+        // Handle user creation in DynamoDB after email verification
+        if (event === 'USER_UPDATED' || event === 'SIGNED_IN') {
+          if (session?.user?.email_confirmed_at && !session.user.user_metadata?.dynamodb_created) {
+            try {
+              const userData: UserType = {
+                id: session.user.id,
+                name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'User',
+                family_id: 'default-family-id',
+                email: session.user.email || undefined,
+                is_admin: session.user.user_metadata?.is_admin || false
+              };
+
+              console.log('Creating user in DynamoDB:', userData);
+              await createUser(userData);
+
+              // Mark user as processed in Supabase
+              await supabase.auth.updateUser({
+                data: { 
+                  ...session.user.user_metadata,
+                  dynamodb_created: true 
+                }
+              });
+
+              console.log('User created in DynamoDB and marked as processed');
+            } catch (error) {
+              console.error('Error creating user in DynamoDB:', error);
+              // Don't show error to user here as it might be confusing
+              // The error is already logged to the console for debugging
+            }
+          }
         }
       }
     );

@@ -60,7 +60,9 @@ export default function SignUp() {
             first_name: firstName,
             last_name: lastName,
             full_name: `${firstName} ${lastName}`.trim(),
-            is_admin: isAdmin
+            is_admin: isAdmin,
+            family_id: 'default-family-id',
+            dynamodb_created: false,
           }
         }
       });
