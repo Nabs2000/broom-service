@@ -30,15 +30,12 @@ export default function Login() {
       }
   
       if (data?.user) {
-        console.log("User data: ", data.user);
-        // Navigate with user ID as a parameter
         router.replace({
           pathname: '/(tabs)/home/[id]',
           params: { id: data.user.id }
         });
       }
     } catch (error) {
-      console.error('Error during sign in:', error);
       Alert.alert('Error', 'An unexpected error occurred during sign in.');
     } finally {
       setLoading(false);

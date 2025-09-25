@@ -73,12 +73,10 @@ export default function SignUp() {
       if (data.user && !data.session) {
         Alert.alert(
           'Verify Your Email',
-          'Please check your email and click the verification link to complete your registration.'
         );
         router.replace('/(auth)/login');
       }
     } catch (error) {
-      console.error('Error during signup:', error);
       Alert.alert('Error', 'An unexpected error occurred during signup.');
     } finally {
       setLoading(false);
