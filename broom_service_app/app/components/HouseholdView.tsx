@@ -128,6 +128,8 @@ export default function HouseholdView() {
         const householdRes = await fetch(`${HOUSEHOLD_VIEW_URL}?id=${encodeURIComponent(data.family_id)}`);
         const fullHousehold = await householdRes.json();
         setHousehold(fullHousehold);
+        setInHousehold(true);
+        setShowCreateModal(false);
 
       } else {
         Alert.alert("Error", data?.message || "Failed to create household");
@@ -169,11 +171,6 @@ export default function HouseholdView() {
     fetchHouseholdStatus();
   }, []);
 
-  if (loading) {
-    return <ActivityIndicator size="large" />;
-  }
-
-  // 🚫 User not in household → show "join/create" view
   if (loading) {
     return <ActivityIndicator size="large" />;
   }
