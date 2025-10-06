@@ -108,60 +108,82 @@ export default function HouseholdView() {
   };
 
   const handleCreateHousehold = async () => {
+    if (!householdNameInput.trim()) {
+      Alert.alert("Error", "Please enter a household name");
+      return;
+    }
+
     try {
+      setLoading(true);
       const res = await fetch(`${CREATE_HOUSEHOLD_URL}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userId: testUserId,
-          name: householdNameInput,
+          name: householdNameInput.trim(),
         }),
       });
 
       const data = await res.json();
+      console.log('Create household response:', data);
 
-      console.log(data)
-
-      if (res.ok) {
-        const { householdId } = data;
-        // immediately fetch full household
+      if (res.ok && data.family_id) {
+        // Fetch the complete household data
         const householdRes = await fetch(`${HOUSEHOLD_VIEW_URL}?id=${encodeURIComponent(data.family_id)}`);
-        const fullHousehold = await householdRes.json();
-        setHousehold(fullHousehold);
-        setInHousehold(true);
-        setShowCreateModal(false);
-
+        if (householdRes.ok) {
+          const fullHousehold = await householdRes.json();
+          console.log('Fetched household data:', fullHousehold);
+          setHousehold(fullHousehold);
+          setInHousehold(true);
+          setHouseholdNameInput('');
+          setShowCreateModal(false);
+        } else {
+          throw new Error('Failed to fetch household data');
+        }
       } else {
-        Alert.alert("Error", data?.message || "Failed to create household");
+        throw new Error(data?.message || 'Failed to create household');
       }
-    } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "Something went wrong creating household");
+    } catch (err: any) {
+      console.error('Error creating household:', err);
+      Alert.alert("Error", err.message || "Something went wrong creating household");
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleJoinHousehold = async () => {
+    if (!householdCodeInput.trim()) {
+      Alert.alert("Error", "Please enter a household code");
+      return;
+    }
+
     try {
+      setLoading(true);
       const res = await fetch(`${JOIN_HOUSEHOLD_URL}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          testUserId,
-          familyId: householdCodeInput,
+          userId: testUserId,
+          familyId: householdCodeInput.trim(),
         }),
       });
 
       const data = await res.json();
-      if (res.ok) {
-        setShowJoinModal(false);
-        setInHousehold(true);
+      console.log('Join household response:', data);
+
+      if (res.ok && data.household) {
         setHousehold(data.household);
+        setInHousehold(true);
+        setHouseholdCodeInput('');
+        setShowJoinModal(false);
       } else {
-        Alert.alert("Error", data?.message || "Failed to join household");
+        throw new Error(data?.message || 'Failed to join household');
       }
-    } catch (err) {
-      console.error(err);
-      Alert.alert("Error", "Something went wrong joining household");
+    } catch (err: any) {
+      console.error('Error joining household:', err);
+      Alert.alert("Error", err.message || "Something went wrong joining household");
+    } finally {
+      setLoading(false);
     }
   };
 
