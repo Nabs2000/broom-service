@@ -44,6 +44,22 @@ function weekOffsetForDate(d: Date) {
   return Math.round((targetStart - currentStart) / msPerWeek);
 }
 
+function getWeekRangeLabel(weekOffset: number) {
+  const current = startOfWeek(new Date());
+  const start = new Date(current);
+  start.setDate(current.getDate() + weekOffset * 7);
+
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+
+  const options: Intl.DateTimeFormatOptions = { month: "short", day: "numeric" };
+  const startLabel = start.toLocaleDateString(undefined, options);
+  const endLabel = end.toLocaleDateString(undefined, options);
+
+  return `${startLabel} – ${endLabel}`;
+}
+
+
 function getInitials(fullName: string) {
   return fullName
     .split(" ")
@@ -51,7 +67,7 @@ function getInitials(fullName: string) {
     .join("");
 }
 
-const testUserId = "user_zzz"; // testing user
+const testUserId = "user_yyy"; // testing user
 
 export default function HouseholdView() {
   const [currentUser, setUser] = useState(testUserId);
@@ -96,7 +112,7 @@ export default function HouseholdView() {
         const householdRes = await fetch(`${HOUSEHOLD_VIEW_URL}?id=${encodeURIComponent(data.family_id)}`);
         const householdData = await householdRes.json();
 
-        console.log(householdData)
+        console.log(householdData);
 
         setHousehold(householdData);
       }
@@ -108,46 +124,36 @@ export default function HouseholdView() {
   };
 
   const handleCreateHousehold = async () => {
-    if (!householdNameInput.trim()) {
-      Alert.alert("Error", "Please enter a household name");
-      return;
-    }
-
     try {
-      setLoading(true);
-      const res = await fetch(`${CREATE_HOUSEHOLD_URL}`, {
+      const res = await fetch(CREATE_HOUSEHOLD_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: testUserId,
-          name: householdNameInput.trim(),
-        }),
+        body: JSON.stringify({ 
+          userId: testUserId, 
+          name: householdNameInput }),
       });
-
+  
       const data = await res.json();
-      console.log('Create household response:', data);
-
-      if (res.ok && data.family_id) {
-        // Fetch the complete household data
-        const householdRes = await fetch(`${HOUSEHOLD_VIEW_URL}?id=${encodeURIComponent(data.family_id)}`);
-        if (householdRes.ok) {
-          const fullHousehold = await householdRes.json();
-          console.log('Fetched household data:', fullHousehold);
-          setHousehold(fullHousehold);
-          setInHousehold(true);
-          setHouseholdNameInput('');
-          setShowCreateModal(false);
-        } else {
-          throw new Error('Failed to fetch household data');
-        }
+      console.log("Create household response:", data);
+  
+      if (res.ok && data.householdId) {
+        // ✅ immediately fetch the full household by ID
+        const householdRes = await fetch(`${HOUSEHOLD_VIEW_URL}?id=${encodeURIComponent(data.householdId)}`);
+        if (!householdRes.ok) throw new Error("Failed to fetch household data");
+  
+        const fullHousehold = await householdRes.json();
+        console.log("Fetched full household:", fullHousehold);
+  
+        setHousehold(fullHousehold);
+        setInHousehold(true);
+        setHouseholdNameInput("");
+        setShowCreateModal(false);
       } else {
-        throw new Error(data?.message || 'Failed to create household');
+        throw new Error(data?.message || "Failed to create household");
       }
     } catch (err: any) {
-      console.error('Error creating household:', err);
-      Alert.alert("Error", err.message || "Something went wrong creating household");
-    } finally {
-      setLoading(false);
+      console.error("Error creating household:", err);
+      Alert.alert("Error", err.message);
     }
   };
 
@@ -156,31 +162,33 @@ export default function HouseholdView() {
       Alert.alert("Error", "Please enter a household code");
       return;
     }
-
+  
     try {
       setLoading(true);
-      const res = await fetch(`${JOIN_HOUSEHOLD_URL}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: testUserId,
-          familyId: householdCodeInput.trim(),
-        }),
-      });
-
+      const url = `${JOIN_HOUSEHOLD_URL}?userId=${encodeURIComponent(testUserId)}&joinCode=${encodeURIComponent(householdCodeInput.trim())}`;
+  
+      const res = await fetch(url, { method: "POST" }); // <-- no body
       const data = await res.json();
-      console.log('Join household response:', data);
-
-      if (res.ok && data.household) {
-        setHousehold(data.household);
+  
+      console.log("Join household response:", data);
+  
+      if (res.ok && data.householdId) {
+        // ✅ immediately fetch the full household by ID
+        const householdRes = await fetch(`${HOUSEHOLD_VIEW_URL}?id=${encodeURIComponent(data.householdId)}`);
+        if (!householdRes.ok) throw new Error("Failed to fetch household data");
+  
+        const fullHousehold = await householdRes.json();
+        console.log("Fetched full household:", fullHousehold);
+  
+        setHousehold(fullHousehold);
         setInHousehold(true);
-        setHouseholdCodeInput('');
-        setShowJoinModal(false);
+        setHouseholdNameInput("");
+        setShowCreateModal(false);
       } else {
-        throw new Error(data?.message || 'Failed to join household');
+        throw new Error(data?.message || "Failed to create household");
       }
     } catch (err: any) {
-      console.error('Error joining household:', err);
+      console.error("Error joining household:", err);
       Alert.alert("Error", err.message || "Something went wrong joining household");
     } finally {
       setLoading(false);
@@ -270,12 +278,12 @@ export default function HouseholdView() {
 
         <Text style={styles.weekText}>
           {currentWeek === 0
-            ? "This Week"
+            ? `This Week (${getWeekRangeLabel(currentWeek)})`
             : currentWeek === -1
-            ? "Last Week"
+            ? `Last Week (${getWeekRangeLabel(currentWeek)})`
             : currentWeek === 1
-            ? "Next Week"
-            : `${currentWeek > 0 ? "+" : ""}${currentWeek} Weeks`}
+            ? `Next Week (${getWeekRangeLabel(currentWeek)})`
+            : `${currentWeek > 0 ? "+" : ""}${currentWeek} Weeks (${getWeekRangeLabel(currentWeek)})`}
         </Text>
 
         <Pressable onPress={handleNextWeek} style={styles.arrowButton}>
