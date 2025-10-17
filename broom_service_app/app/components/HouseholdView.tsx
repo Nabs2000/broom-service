@@ -86,6 +86,7 @@ export default function HouseholdView() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const [householdNameInput, setHouseholdNameInput] = useState("");
+  const [joinCodeInput, setJoinCodeInput] = useState("");
   const [householdCodeInput, setHouseholdCodeInput] = useState("");
 
   const fetchHouseholdStatus = async () => {
@@ -130,7 +131,8 @@ export default function HouseholdView() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           userId: testUserId, 
-          name: householdNameInput }),
+          name: householdNameInput,
+          joinCode: joinCodeInput}),
       });
   
       const data = await res.json();
@@ -228,6 +230,13 @@ export default function HouseholdView() {
                 placeholder="Enter household name"
                 value={householdNameInput}
                 onChangeText={setHouseholdNameInput}
+                style={styles.input}
+              />
+
+              <TextInput
+                placeholder="Enter invite code"
+                value={joinCodeInput}
+                onChangeText={setJoinCodeInput}
                 style={styles.input}
               />
               <Pressable style={styles.actionButton} onPress={handleCreateHousehold}>
