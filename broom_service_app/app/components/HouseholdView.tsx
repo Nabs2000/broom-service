@@ -187,7 +187,7 @@ export default function HouseholdView() {
         setHouseholdNameInput("");
         setShowCreateModal(false);
       } else {
-        throw new Error(data?.message || "Failed to create household");
+        throw new Error(data?.message || "Failed to join household");
       }
     } catch (err: any) {
       console.error("Error joining household:", err);
